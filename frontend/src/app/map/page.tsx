@@ -143,6 +143,11 @@ const MapPage = () => {
     zIndex: 1,
   };
 
+  // デバッグ用のエラーハンドリングを追加
+  const handleImageError = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
+    console.error('画像の読み込みに失敗しました:', (e.target as HTMLDivElement).style.backgroundImage);
+  };
+
   return (
     <div 
       style={{ 
@@ -175,15 +180,18 @@ const MapPage = () => {
         }}
         onMouseDown={handleMouseDown}
       >
-        <div style={{
-          width: '100%',
-          height: '100%',
-          position: 'absolute',
-          backgroundImage: 'url(/japan/defaultjapan.png)',
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }} />
+        <div 
+          style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            backgroundImage: 'url(/japan/defaultjapan.png)',
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+          onError={handleImageError}
+        />
         {showMaskedKansai && (
           <div style={{
             width: '100%',
