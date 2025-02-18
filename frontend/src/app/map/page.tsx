@@ -70,7 +70,7 @@ const MapPage = () => {
     zIndex: 1,
   };
 
-  // メニューボタンのスタイル
+  // メニューボタンのスタイルを Tailwind クラスに変更
   const menuButtonStyle = {
     width: '100%',
     height: '100%',
@@ -86,6 +86,7 @@ const MapPage = () => {
     background: 'transparent',
     position: 'relative' as const,
     zIndex: 2,
+    className: 'hover:bg-opacity-80 transition-colors duration-200' // Tailwind クラスを追加
   };
 
   const menuLineStyle = {
@@ -97,6 +98,7 @@ const MapPage = () => {
     zIndex: 1,
   };
 
+  // メニューフレームに Tailwind クラスを追加
   const menuFrameStyle = {
     position: 'fixed' as const,
     top: '64px',
@@ -108,6 +110,7 @@ const MapPage = () => {
     flexDirection: 'column' as const,
     alignItems: 'center',
     justifyContent: 'space-between',
+    className: 'backdrop-blur-sm' // 半透明エフェクトを追加
   };
 
   const menuInnerStyle = {
@@ -344,7 +347,7 @@ const MapPage = () => {
         ...menuFrameStyle,
         left: 'auto',
         right: '27px',
-        width: '290px',
+        width: '250px',
       }}>
         <div style={{
           position: 'absolute',
@@ -363,9 +366,9 @@ const MapPage = () => {
         }}>
           <table style={{ 
             width: '100%',
-            borderSpacing: '0 15px',
+            borderSpacing: '0 14px',
             fontSize: '25px',
-            marginTop: '-10px',
+            marginTop: '-14px',
             lineHeight: '1',
           }}> 
             <tbody>
@@ -414,37 +417,87 @@ const MapPage = () => {
       {/* 拡大縮小ボタン */}
       <div style={{
         position: 'absolute',
-        bottom: '20px',
-        left: '20px',
+        bottom: '75px',
+        left: '50px',
         display: 'flex',
-        flexDirection: 'column',
-        gap: '10px'
+        flexDirection: 'row',
+        gap: '20px'
       }}>
         <button onClick={handleZoomOut} style={{
           ...buttonStyle,
-          fontSize: '24px', // ズームボタンの文字サイズを24pxに拡大
+          width: '60px',
+          height: '60px',
+          fontSize: '60px',
+          padding: '0 0 8px 0'
         }}>-</button>
         <button onClick={handleZoomIn} style={{
           ...buttonStyle,
-          fontSize: '24px', // ズームボタンの文字サイズを24pxに拡大
+          width: '60px',
+          height: '60px',
+          fontSize: '60px',
         }}>+</button>
+      </div>
+
+      {/* 右下の原寸画像とその背景 */}
+      <div style={{
+        position: 'fixed',
+        bottom: '0px',
+        right: '125px',
+        width: '250px',
+        height: '250px',
+        zIndex: 10
+      }}>
+        <div style={{
+          position: 'absolute',
+          width: '93%',
+          height: '43%',
+          backgroundColor: '#FBC9FF',  // 背景色を変更
+          borderRadius: '10px',
+          zIndex: 0,
+          bottom: '31%',
+          left: '4%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          cursor: 'pointer',
+          fontSize: '20px',
+          textAlign: 'center',
+          lineHeight: '1.4'
+        }}>
+          <div style={{ fontSize: '28px', paddingBottom: '10px' }}>勢力を拡大する</div>  {/* 上の文字サイズを大きく */}
+          <div>ランダム数: 10</div>
+        </div>
+        <div style={{
+          width: '100%',
+          height: '100%',
+          backgroundImage: 'url(/frame/nextButton.png)',
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          position: 'relative',
+          zIndex: 1,
+          pointerEvents: 'none'
+        }} />
       </div>
     </div>
   );
 };
 
+// ボタンスタイルを更新
 const buttonStyle = {
-  width: '40px',
-  height: '40px',
+  width: '60px',
+  height: '60px',
   borderRadius: '50%',
-  border: 'none',
+  border: '5px solid #000000', // ボーダーを追加
   backgroundColor: '#fff',
   boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
   cursor: 'pointer',
-  fontSize: '24px', // デフォルトのボタンフォントサイズも24pxに拡大
+  fontSize: '30px',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center'
+  justifyContent: 'center',
+  className: 'hover:bg-gray-100 active:bg-gray-200 transition-colors duration-200'
 };
 
 export default MapPage;
