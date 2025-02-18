@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import React from 'react';
+import './globals.css'; // グローバルスタイルをインポート
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-geist-sanss",
   subsets: ["latin"],
 });
 
@@ -19,16 +20,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="ja">
+      <head>
+        <title>Map Page</title>
+      </head>
+      <body className="m-0 p-0">
         {children}
       </body>
     </html>
-  );
+  )
 }
