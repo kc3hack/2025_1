@@ -49,6 +49,63 @@ const MapPage = () => {
     e.preventDefault();
   };
 
+  // メニューボタンのスタイル
+  const menuButtonStyle = {
+    width: '250px',
+    height: '60px',
+    padding: '0',
+    margin: '3px 0',
+    background: `url('/frame/button.png') no-repeat center center`,
+    backgroundColor: '#ff0000',
+    backgroundSize: '100% 100%',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '22px',
+    textAlign: 'center' as const,
+    position: 'relative' as const,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '10px',
+    backgroundClip: 'padding-box',
+  };
+
+  const menuLineStyle = {
+    width: '275px',
+    height: '20px',
+    background: `url('/frame/line.png') no-repeat center center`,
+    backgroundSize: '100% auto',
+    position: 'relative' as const,
+    zIndex: 1,
+  };
+
+  const menuFrameStyle = {
+    position: 'fixed' as const,
+    top: '64px',
+    left: '27px',
+    width: '250px',
+    height: '350px',
+    padding: '0px 15px 47px 15px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  };
+
+  const menuInnerStyle = {
+    width: '95%',
+    height: '95%',
+    backgroundColor: '#E5FFB6',
+    padding: '13px 15px 40px 15px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    borderRadius: '5px',
+    position: 'relative' as const,
+    zIndex: 1,
+  };
+
   return (
     <div 
       style={{ 
@@ -166,6 +223,123 @@ const MapPage = () => {
           />
         )}
       </div>
+
+      {/* 左側のメニュー */}
+      <div style={menuFrameStyle}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: `url('/frame/menu.png') no-repeat center center`,
+          backgroundSize: '100% 100%',
+          zIndex: 2,
+        }} />
+        <div style={menuInnerStyle}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '5px',
+          }}>
+            <h2 style={{ 
+              margin: '0 0 8px 0',
+              fontSize: '26px',
+              fontWeight: 'bold'
+            }}>メニュー</h2>
+            <button style={menuButtonStyle}>スコア一覧</button>
+            <button style={menuButtonStyle}>パーツコレクション</button>
+            <button style={menuButtonStyle}>古墳コレクション</button>
+          </div>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '5px',
+          }}>
+            <div style={menuLineStyle}></div>
+            <button style={{
+              ...menuButtonStyle,
+              backgroundColor: '#ff0000',
+            }}>ゲーム終了</button>
+          </div>
+        </div>
+      </div>
+
+      {/* 右上の統治度表示 */}
+      <div style={{
+        ...menuFrameStyle,
+        left: 'auto',
+        right: '27px',
+        width: '290px',
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          background: `url('/frame/menu.png') no-repeat center center`,
+          backgroundSize: '100% 100%',
+          zIndex: 2,
+        }} />
+        <div style={{
+          ...menuInnerStyle,
+          backgroundColor: '#FFFFFF',
+          padding: '20px 10px 30px 10px',
+        }}>
+          <table style={{ 
+            width: '100%',
+            borderSpacing: '0 15px',
+            fontSize: '25px',
+            marginTop: '-10px',
+            lineHeight: '1',
+          }}> 
+            <tbody>
+              <tr>
+                <td>日本の統治度</td>
+                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>24%</td>
+              </tr>
+              <tr>
+                <td colSpan={2} style={{ padding: '0px 0' }}>
+                  <div style={menuLineStyle}></div>
+                </td>
+              </tr>
+              <tr>
+                <td>関西の統治度</td>
+                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>50%</td>
+              </tr>
+              <tr>
+                <td>中部の統治度</td>
+                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
+              </tr>
+              <tr>
+                <td>関東の統治度</td>
+                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
+              </tr>
+              <tr>
+                <td>東北の統治度</td>
+                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
+              </tr>
+              <tr>
+                <td>中国の統治度</td>
+                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
+              </tr>
+              <tr>
+                <td>四国の統治度</td>
+                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
+              </tr>
+              <tr>
+                <td>九州の統治度</td>
+                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* 拡大縮小ボタン */}
       <div style={{
         position: 'absolute',
         bottom: '20px',
@@ -174,8 +348,14 @@ const MapPage = () => {
         flexDirection: 'column',
         gap: '10px'
       }}>
-        <button onClick={handleZoomOut} style={buttonStyle}>-</button>
-        <button onClick={handleZoomIn} style={buttonStyle}>+</button>
+        <button onClick={handleZoomOut} style={{
+          ...buttonStyle,
+          fontSize: '24px', // ズームボタンの文字サイズを24pxに拡大
+        }}>-</button>
+        <button onClick={handleZoomIn} style={{
+          ...buttonStyle,
+          fontSize: '24px', // ズームボタンの文字サイズを24pxに拡大
+        }}>+</button>
       </div>
     </div>
   );
@@ -189,7 +369,7 @@ const buttonStyle = {
   backgroundColor: '#fff',
   boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
   cursor: 'pointer',
-  fontSize: '20px',
+  fontSize: '24px', // デフォルトのボタンフォントサイズも24pxに拡大
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center'
