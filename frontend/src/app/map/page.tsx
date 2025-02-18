@@ -175,99 +175,91 @@ const MapPage = () => {
         }}
         onMouseDown={handleMouseDown}
       >
-        <img 
-          src="/japan/defaultjapan.png" 
-          alt="Japan" 
-          style={{
+        <div style={{
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          backgroundImage: 'url(/japan/defaultjapan.png)',
+          backgroundSize: 'contain',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }} />
+        {showMaskedKansai && (
+          <div style={{
             width: '100%',
             height: '100%',
-            objectFit: 'contain',
-            position: 'absolute'
-          }}
-        />
-        {showMaskedKansai && (
-          <img 
-            src="/japan/mask/maskedKansai.png" 
-            alt="Masked Kansai" 
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              position: 'absolute'
-            }}
-          />
+            position: 'absolute',
+            backgroundImage: 'url(/japan/mask/maskedKansai.png)',
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }} />
         )}
         {showMaskedKanto && (
-          <img 
-            src="/japan/mask/maskedKanto.png" 
-            alt="Masked Kanto" 
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              position: 'absolute'
-            }}
-          />
+          <div style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            backgroundImage: 'url(/japan/mask/maskedKanto.png)',
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }} />
         )}
         {showMaskedKyushu && (
-          <img 
-            src="/japan/mask/maskedKyushu.png" 
-            alt="Masked Kyushu" 
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              position: 'absolute'
-            }}
-          />
+          <div style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            backgroundImage: 'url(/japan/mask/maskedKyushu.png)',
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }} />
         )}
         {showMaskedTohoku && (
-          <img 
-            src="/japan/mask/maskedTohoku.png" 
-            alt="Masked Tohoku" 
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              position: 'absolute'
-            }}
-          />
+          <div style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            backgroundImage: 'url(/japan/mask/maskedTohoku.png)',
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }} />
         )}
         {showMaskedChubu && (
-          <img 
-            src="/japan/mask/maskedChubu.png" 
-            alt="Masked Chubu" 
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              position: 'absolute'
-            }}
-          />
+          <div style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            backgroundImage: 'url(/japan/mask/maskedChubu.png)',
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }} />
         )}
         {showMaskedChugoku && (
-          <img 
-            src="/japan/mask/maskedChugoku.png" 
-            alt="Masked Chugoku" 
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              position: 'absolute'
-            }}
-          />
+          <div style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            backgroundImage: 'url(/japan/mask/maskedChugoku.png)',
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }} />
         )}
         {showMaskedShikoku && (
-          <img 
-            src="/japan/mask/maskedShikoku.png" 
-            alt="Masked Shikoku" 
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              position: 'absolute'
-            }}
-          />
+          <div style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            backgroundImage: 'url(/japan/mask/maskedShikoku.png)',
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }} />
         )}
       </div>
 
