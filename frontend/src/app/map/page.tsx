@@ -1,13 +1,29 @@
 "use client"; // クライアントコンポーネントとしてマーク
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 
 const MapPage = () => {
-  // 初期位置をさらに上に設定
-  const [position, setPosition] = useState({ x: window.innerWidth / 1.5, y: -900 }); // y座標を-900に設定
-  // 初期スケールをさらに拡大された状態に設定
-  const [scale, setScale] = useState(10); // 初期スケールを10に設定
+  // 初期表示を制御するstate
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [position, setPosition] = useState({ x: 800, y: -900 });
+  const [scale, setScale] = useState(10);
+  
+  useEffect(() => {
+    setPosition({ 
+      x: window.innerWidth / 1.5, 
+      y: -900 
+    });
+    setIsLoaded(true);
+
+    const handleResize = () => {
+      setPosition({ x: window.innerWidth / 1.5, y: -900 });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [dragging, setDragging] = useState(false);
   const [rel, setRel] = useState({ x: 0, y: 0 });
   const japanImageRef = useRef<HTMLDivElement>(null);
@@ -145,15 +161,17 @@ const MapPage = () => {
       onMouseUp={handleMouseUp}
     >
       <div
-        ref={japanImageRef} // useRefを使用して参照を設定
+        ref={japanImageRef}
         style={{
           position: 'absolute',
-          top: position.y,
-          left: position.x,
+          top: `${position.y}px`,
+          left: `${position.x}px`,
           transform: `scale(${scale})`,
           cursor: dragging ? 'grabbing' : 'grab',
           width: '50%',
-          height: '50%'
+          height: '50%',
+          opacity: isLoaded ? 1 : 0,  // ロード完了まで非表示
+          transition: 'opacity 0.3s'   // フェードイン効果
         }}
         onMouseDown={handleMouseDown}
       >
@@ -161,7 +179,8 @@ const MapPage = () => {
           src="/japan/defaultjapan.png" 
           alt="Japan" 
           fill
-          sizes="(max-width: 768px) 100vw, 50vw"
+          priority
+          unoptimized
           style={{
             objectFit: 'contain'
           }}
@@ -171,7 +190,7 @@ const MapPage = () => {
             src="/japan/mask/maskedKansai.png" 
             alt="Masked Kansai" 
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            unoptimized
             style={{
               objectFit: 'contain'
             }}
@@ -182,7 +201,7 @@ const MapPage = () => {
             src="/japan/mask/maskedKanto.png" 
             alt="Masked Kanto" 
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            unoptimized
             style={{
               objectFit: 'contain'
             }}
@@ -193,7 +212,7 @@ const MapPage = () => {
             src="/japan/mask/maskedKyushu.png" 
             alt="Masked Kyushu" 
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            unoptimized
             style={{
               objectFit: 'contain'
             }}
@@ -204,7 +223,7 @@ const MapPage = () => {
             src="/japan/mask/maskedTohoku.png" 
             alt="Masked Tohoku" 
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            unoptimized
             style={{
               objectFit: 'contain'
             }}
@@ -215,7 +234,7 @@ const MapPage = () => {
             src="/japan/mask/maskedChubu.png" 
             alt="Masked Chubu" 
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            unoptimized
             style={{
               objectFit: 'contain'
             }}
@@ -226,7 +245,7 @@ const MapPage = () => {
             src="/japan/mask/maskedChugoku.png" 
             alt="Masked Chugoku" 
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            unoptimized
             style={{
               objectFit: 'contain'
             }}
@@ -237,7 +256,7 @@ const MapPage = () => {
             src="/japan/mask/maskedShikoku.png" 
             alt="Masked Shikoku" 
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            unoptimized
             style={{
               objectFit: 'contain'
             }}
