@@ -185,7 +185,7 @@ const MapPage = () => {
             width: '100%',
             height: '100%',
             position: 'absolute',
-            backgroundImage: 'url(/japan/defaultjapan.png)',
+            backgroundImage: 'url(/japan/defaultJapan.png)',
             backgroundSize: 'contain',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
