@@ -1,0 +1,31 @@
+version: "3"
+services:
+  mysql:
+    image: mysql:8
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    volumes:
+      #- ./docker/mysql:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+    ports:
+      - "3306:3306"
+
+  backend:
+    build: 
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    container_name: hono_backend
+    restart: always
+    environment:
+      DATABASE_URL: "mysql://myuser:mypassword@mysql:3306/mydb"
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mysql
+    command: bun run dev
