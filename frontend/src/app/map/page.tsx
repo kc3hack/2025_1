@@ -49,29 +49,47 @@ const MapPage = () => {
     e.preventDefault();
   };
 
-  // メニューボタンのスタイル
-  const menuButtonStyle = {
+  // メニューボタンの外枠スタイル
+  const menuButtonFrameStyle = {
     width: '250px',
     height: '60px',
+    margin: '0px 0',
+    position: 'relative' as const,
+  };
+
+  // メニューボタンの背景スタイル
+  const menuButtonBgStyle = {
+    width: '95%',
+    height: '80%',
+    position: 'absolute' as const,
+    top: '45%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    background: '#D5FF87',
+    borderRadius: '5px',
+    zIndex: 1,
+  };
+
+  // メニューボタンのスタイル
+  const menuButtonStyle = {
+    width: '100%',
+    height: '100%',
     padding: '0',
-    margin: '3px 0',
-    background: `url('/frame/button.png') no-repeat center center`,
-    backgroundColor: '#ff0000',
-    backgroundSize: '100% 100%',
+    paddingBottom: '10px',
     border: 'none',
     cursor: 'pointer',
     fontSize: '22px',
     textAlign: 'center' as const,
-    position: 'relative' as const,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '10px',
-    backgroundClip: 'padding-box',
+    background: 'transparent',
+    position: 'relative' as const,
+    zIndex: 2,
   };
 
   const menuLineStyle = {
-    width: '275px',
+    width: '250px',
     height: '20px',
     background: `url('/frame/line.png') no-repeat center center`,
     backgroundSize: '100% auto',
@@ -242,15 +260,58 @@ const MapPage = () => {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '5px',
+            paddingTop: '20px',
           }}>
             <h2 style={{ 
-              margin: '0 0 8px 0',
+              margin: '0 0 16px 0',
               fontSize: '26px',
               fontWeight: 'bold'
             }}>メニュー</h2>
-            <button style={menuButtonStyle}>スコア一覧</button>
-            <button style={menuButtonStyle}>パーツコレクション</button>
-            <button style={menuButtonStyle}>古墳コレクション</button>
+            <div style={menuButtonFrameStyle}>
+              <div style={menuButtonBgStyle} />
+              <button style={menuButtonStyle}>スコア一覧</button>
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: `url('/frame/button.png') no-repeat center center`,
+                backgroundSize: '100% 100%',
+                zIndex: 3,
+                pointerEvents: 'none',
+              }} />
+            </div>
+            <div style={menuButtonFrameStyle}>
+              <div style={menuButtonBgStyle} />
+              <button style={menuButtonStyle}>パーツコレクション</button>
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: `url('/frame/button.png') no-repeat center center`,
+                backgroundSize: '100% 100%',
+                zIndex: 3,
+                pointerEvents: 'none',
+              }} />
+            </div>
+            <div style={menuButtonFrameStyle}>
+              <div style={menuButtonBgStyle} />
+              <button style={menuButtonStyle}>古墳コレクション</button>
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: `url('/frame/button.png') no-repeat center center`,
+                backgroundSize: '100% 100%',
+                zIndex: 3,
+                pointerEvents: 'none',
+              }} />
+            </div>
           </div>
           <div style={{
             display: 'flex',
@@ -259,10 +320,21 @@ const MapPage = () => {
             gap: '5px',
           }}>
             <div style={menuLineStyle}></div>
-            <button style={{
-              ...menuButtonStyle,
-              backgroundColor: '#ff0000',
-            }}>ゲーム終了</button>
+            <div style={menuButtonFrameStyle}>
+              <div style={menuButtonBgStyle} />
+              <button style={menuButtonStyle}>ゲーム終了</button>
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: `url('/frame/button.png') no-repeat center center`,
+                backgroundSize: '100% 100%',
+                zIndex: 3,
+                pointerEvents: 'none',
+              }} />
+            </div>
           </div>
         </div>
       </div>
