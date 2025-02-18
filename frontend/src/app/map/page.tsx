@@ -170,95 +170,102 @@ const MapPage = () => {
           cursor: dragging ? 'grabbing' : 'grab',
           width: '50%',
           height: '50%',
-          opacity: isLoaded ? 1 : 0,  // ロード完了まで非表示
-          transition: 'opacity 0.3s'   // フェードイン効果
+          opacity: isLoaded ? 1 : 0,
+          transition: 'opacity 0.3s'
         }}
         onMouseDown={handleMouseDown}
       >
-        <Image 
+        <img 
           src="/japan/defaultjapan.png" 
           alt="Japan" 
-          fill
-          priority
-          unoptimized
           style={{
-            objectFit: 'contain'
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            position: 'absolute'
           }}
         />
         {showMaskedKansai && (
-          <Image 
+          <img 
             src="/japan/mask/maskedKansai.png" 
             alt="Masked Kansai" 
-            fill
-            unoptimized
             style={{
-              objectFit: 'contain'
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              position: 'absolute'
             }}
           />
         )}
         {showMaskedKanto && (
-          <Image 
+          <img 
             src="/japan/mask/maskedKanto.png" 
             alt="Masked Kanto" 
-            fill
-            unoptimized
             style={{
-              objectFit: 'contain'
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              position: 'absolute'
             }}
           />
         )}
         {showMaskedKyushu && (
-          <Image 
+          <img 
             src="/japan/mask/maskedKyushu.png" 
             alt="Masked Kyushu" 
-            fill
-            unoptimized
             style={{
-              objectFit: 'contain'
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              position: 'absolute'
             }}
           />
         )}
         {showMaskedTohoku && (
-          <Image 
+          <img 
             src="/japan/mask/maskedTohoku.png" 
             alt="Masked Tohoku" 
-            fill
-            unoptimized
             style={{
-              objectFit: 'contain'
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              position: 'absolute'
             }}
           />
         )}
         {showMaskedChubu && (
-          <Image 
+          <img 
             src="/japan/mask/maskedChubu.png" 
             alt="Masked Chubu" 
-            fill
-            unoptimized
             style={{
-              objectFit: 'contain'
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              position: 'absolute'
             }}
           />
         )}
         {showMaskedChugoku && (
-          <Image 
+          <img 
             src="/japan/mask/maskedChugoku.png" 
             alt="Masked Chugoku" 
-            fill
-            unoptimized
             style={{
-              objectFit: 'contain'
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              position: 'absolute'
             }}
           />
         )}
         {showMaskedShikoku && (
-          <Image 
+          <img 
             src="/japan/mask/maskedShikoku.png" 
             alt="Masked Shikoku" 
-            fill
-            unoptimized
             style={{
-              objectFit: 'contain'
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              position: 'absolute'
             }}
           />
         )}
