@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.module.css';
 
-const PartsCollection: React.FC = () => {
+const TombsCollection: React.FC = () => {
   const parts = Array.from({ length: 64 }, (_, index) => `Part ${index + 1}`);
 
   return (
@@ -27,4 +27,4 @@ const PartsCollection: React.FC = () => {
   );
 };
 
-export default PartsCollection;
+export default TombsCollection;
