@@ -10,8 +10,8 @@
 .scorePanelInner {
     position: absolute;
     top: 2px;
-    left: 5px;
-    width: calc(100% - 15px);
+    left: 8px;
+    width: calc(100% - 18px);
     height: calc(100% - 15px);
     background-color: #B6FFB1;
     border-radius: 10px;
