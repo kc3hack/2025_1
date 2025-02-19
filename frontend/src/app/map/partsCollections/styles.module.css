@@ -1,7 +1,7 @@
 .container {
   background-image: url('/background/glass.png');
-  background-size: cover;
-  background-position: center;
+  background-repeat: repeat;
+  background-size: 500px;
   min-height: 100vh;
   overscroll-behavior: none;
 }
