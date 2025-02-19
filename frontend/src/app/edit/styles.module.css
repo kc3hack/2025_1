@@ -116,3 +116,62 @@
     border-radius: 15px;
     z-index: 1;
 }
+
+.nextPartsTitle {
+    position: absolute;
+    top: 460px;
+    left: -78px;
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+    z-index: 2;
+}
+
+.remainingParts {
+    position: absolute;
+    top: 565px;
+    right: 65px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+    text-align: center;
+    line-height: 1.5;
+    z-index: 4;
+}
+
+.nextButtonContainer {
+    position: absolute;
+    bottom: 30px;
+    left: 20px;
+    width: calc(100% - 40px);
+    height: 70px;
+    background-image: url('/frame/button.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 4;
+}
+
+.nextButtonInner {
+    position: absolute;
+    bottom: 43px;
+    left: 72px;
+    width: calc(100% - 140px);
+    height: 55px;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    z-index: 1;
+}
+
+.buttonText {
+    position: absolute;
+    bottom: 50px;
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+    z-index: 4;
+}
