@@ -2,13 +2,17 @@
 
 import styles from './EditPartsMenu.module.css'
 
-export default function EditPartsMenu() {
+interface EditPartsMenuProps {
+    onPartsListClick: () => void;
+}
+
+export default function EditPartsMenu({ onPartsListClick }: EditPartsMenuProps) {
     const handleNextPartsClick = () => {
         console.log('次のパーツがクリックされました');
     };
 
     const handlePartsListClick = () => {
-        console.log('パーツ一覧ボタンがクリックされました');
+        onPartsListClick();
     };
 
     return (

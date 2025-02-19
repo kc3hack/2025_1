@@ -1,0 +1,75 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    cursor: pointer;
+}
+
+.modal {
+    position: absolute;
+    width: 85%;
+    max-width: 700px;
+    height: 75%;
+    max-height: 750px;
+    background: none;
+    border: none;
+    padding: 0;
+    position: relative;
+    cursor: default;
+}
+
+.whiteBackground {
+    position: absolute;
+    top: 49%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%;
+    height: 98%;
+    background-color: white;
+    border-radius: 8px;
+    z-index: 1;
+}
+
+.frameContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/frame/partsMenu.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    z-index: 2;
+}
+
+.backButton {
+    position: absolute;
+    top: 10px;
+    left: 30px;
+    background: none;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 3;
+    color: #000;
+}
+
+.backButton:hover {
+    opacity: 0.7;
+}
+
+.content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
