@@ -1,0 +1,66 @@
+.container {
+  background-image: url('/background/glass.png');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  overscroll-behavior: none;
+}
+
+.wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: none;
+}
+
+.titleContainer {
+  width: 100%;
+  text-align: center;
+  margin-top: 2.5rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: bold;
+}
+
+.gridContainer {
+  height: 80%;
+  overflow-y: scroll;
+  margin-top: 1.25rem;
+  padding: 0 12rem;
+  overscroll-behavior: none;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 200px);
+  gap: 2rem;
+  justify-content: center;
+}
+
+.gridItem {
+  height: 200px;
+  background-color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+}
+
+.backButton {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 1.25rem;
+  width: 9rem;
+  height: 4rem;
+  background-color: #f3f4f6;
+  color: black;
+  border-radius: 0.25rem;
+}
+
+.backButton:hover {
+  background-color: #d1d5db;
+} 

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import React from 'react';
-import './globals.css'; // グローバルスタイルをインポート
+import styles from './styles.module.css';
+import './globals.css';
 
 const geistSans = Geist({
   variable: "--font-geist-sanss",
@@ -28,7 +29,7 @@ export default function RootLayout({
       <head>
         <title>Map Page</title>
       </head>
-      <body className="m-0 p-0">
+      <body className={styles.body}>
         {children}
       </body>
     </html>
