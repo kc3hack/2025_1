@@ -7,6 +7,7 @@ WORKDIR /app
 # 依存関係をコピー
 ADD ../package.json ../bun.lock ./
 RUN bun install
+RUN bun add -d bun-types
 RUN bun update hono
 # アプリコードをコピー
 COPY . .
