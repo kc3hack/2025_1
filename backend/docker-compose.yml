@@ -29,3 +29,5 @@ services:
     depends_on:
       - mysql
     command: bun run dev
+    tty: true
+    stdin_open: true
