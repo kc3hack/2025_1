@@ -1,7 +1,7 @@
 "use client"; // クライアントコンポーネントとしてマーク
 
 import React, { useState, useRef, useEffect } from 'react';
-import styles from './page.module.css';
+import styles from './styles.module.css';
 
 const MapPage = () => {
   // 初期表示を制御するstate
