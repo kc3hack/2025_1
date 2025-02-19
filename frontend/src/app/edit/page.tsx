@@ -7,6 +7,7 @@ import TipsPanel from '../components/edit/TipsPanel'
 import styles from './styles.module.css'
 import { useState } from 'react'
 import PartsList from '../components/edit/PartsList'
+import GameGrid from '../components/edit/GameGrid'
 
 export default function EditPage() {
     const [showPartsList, setShowPartsList] = useState(false)
@@ -14,6 +15,7 @@ export default function EditPage() {
     return (
         <div className={styles.container}>
             <EditPartsMenu onPartsListClick={() => setShowPartsList(true)} />
+            <GameGrid />
             <ScorePanel />
             <TipsPanel />
             <div className={styles.buttonGroup}>
