@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles.module.css';
 
-const PartsCollection: React.FC = () => {
+const ScoreCollection: React.FC = () => {
   const parts = [
     { rank: 1, shape: 'Part 1', score: 100 },
     { rank: 2, shape: 'Part 2', score: 90 },
@@ -40,4 +40,4 @@ const PartsCollection: React.FC = () => {
   );
 };
 
-export default PartsCollection;
+export default ScoreCollection;
