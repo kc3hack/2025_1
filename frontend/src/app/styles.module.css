@@ -1,0 +1,67 @@
+.container {
+  background-image: url('/background/glass.png');
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+  overscroll-behavior: none;
+}
+
+.wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overscroll-behavior: none;
+}
+
+.titleContainer {
+  width: 600px;
+  height: 80px;
+  text-align: center;
+  margin-top: 150px;
+}
+
+.title {
+  font-size: 6rem;
+  font-weight: bold;
+}
+
+.form {
+  margin-top: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 60px;
+}
+
+.input {
+  width: 500px;
+  height: 50px;
+  padding: 0.5rem;
+  font-size: 1.125rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  margin-bottom: 0;
+}
+
+.button {
+  width: 600px;
+  height: 100px;
+  padding: 0.5rem;
+  font-size: 3.75rem;
+  font-weight: bold;
+  background-color: #f3f4f6;
+  color: black;
+  border-radius: 0.25rem;
+  margin-top: 50px;
+}
+
+.button:hover {
+  background-color: #d1d5db;
+}
+
+.body {
+  margin: 0;
+  padding: 0;
+} 

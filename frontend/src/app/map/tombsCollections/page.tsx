@@ -1,25 +1,26 @@
 import React from 'react';
+import styles from './styles.module.css';
 
 const PartsCollection: React.FC = () => {
   const parts = Array.from({ length: 64 }, (_, index) => `Part ${index + 1}`);
 
   return (
-    <div className="bg-[url('/background/glass.png')] bg-cover bg-center min-h-screen">
-      <div className="w-full h-screen flex flex-col">
-        <div className="w-full text-center mt-10">
-          <h1 className="text-4xl font-bold">古墳コレクション</h1>
+    <div className={styles.container}>
+      <div className={styles.wrapper}>
+        <div className={styles.titleContainer}>
+          <h1 className={styles.title}>古墳コレクション</h1>
         </div>
-        <div className="h-[80%] overflow-y-scroll mt-5 px-48" content='center'>
-          <div className="flex flex-wrap justify-center">
+        <div className={styles.gridContainer}>
+          <div className={styles.grid}>
             {parts.map((part, index) => (
-              <div key={index} className="w-72 h-72 m-4 bg-gray-200 flex items-center justify-center border border-gray-300 rounded">
+              <div key={index} className={styles.gridItem}>
                 {part}
               </div>
             ))}
           </div>
         </div>
-        <button className="fixed bottom-10 left-5 w-36 h-16 bg-gray-100 text-black rounded hover:bg-gray-300">
-              戻る
+        <button className={styles.backButton}>
+          戻る
         </button>
       </div>
     </div>
