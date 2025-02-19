@@ -3,6 +3,8 @@ import styles from './EditPartsMenu.module.css'
 export default function EditPartsMenu() {
     return (
         <div className={styles.editMenuContainer}>
+            <div className={styles.editMenuFrame}></div>
+            
             <div className={styles.editMenuInner}>
                 <div className={styles.partsTitle}>設置パーツ</div>
                 <div className={styles.nextPartsInner}></div>
