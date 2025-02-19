@@ -18,7 +18,7 @@
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
-    z-index: 3;
+    z-index: 1;
 }
 
 .editMenuInner {
@@ -29,7 +29,7 @@
     height: calc(100% - 15px);
     background-color: #BDFFA3;
     border-radius: 10px;
-    z-index: 1;
+    z-index: 0;
 }
 
 .partsTitle {
@@ -47,21 +47,24 @@
 .nextPartsContainer {
     position: absolute;
     top: 100px;
-    left: 20px;
-    width: calc(100% - 40px);
+    left: 100px;
+    width: 250px;
     height: 325px;
     background-image: url('/frame/nextParts.png');
-    background-size: contain;
-    background-position: center;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
     z-index: 3;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0;
 }
 
 .nextPartsInner {
     position: absolute;
     top: 100px;
-    left: 90px;
-    width: calc(100% - 185px);
+    left: 105px;
+    width: calc(100% - 215px);
     height: 315px;
     background-image: url('/background/glass.png');
     background-repeat: repeat;
@@ -73,21 +76,23 @@
 .nextPartsContainer2 {
     position: absolute;
     top: 500px;
-    left: -60px;
-    width: calc(100% - 40px);
+    left: 60px;
+    width: 170px;
     height: 200px;
     background-image: url('/frame/nextParts.png');
-    background-size: contain;
-    background-position: center;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
     z-index: 3;
+    border: none;
+    background-color: transparent;
+    padding: 0;
 }
 
 .nextPartsInner2 {
     position: absolute;
     top: 500px;
-    left: 60px;
-    width: calc(100% - 280px);
+    left: 65px;
+    width: calc(100% - 290px);
     height: 193px;
     background-image: url('/background/glass.png');
     background-repeat: repeat;
@@ -123,21 +128,24 @@
 .nextButtonContainer {
     position: absolute;
     bottom: 30px;
-    left: 20px;
-    width: calc(100% - 40px);
+    left: 100px;
+    width: 250px;
     height: 70px;
     background-image: url('/frame/button.png');
-    background-size: contain;
-    background-position: center;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
-    z-index: 3;
+    z-index: 5;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 0;
 }
 
 .nextButtonInner {
     position: absolute;
     bottom: 43px;
-    left: 72px;
-    width: calc(100% - 140px);
+    left: 105px;
+    width: 240px;
     height: 55px;
     background-color: #FFFFFF;
     border-radius: 10px;
@@ -147,10 +155,11 @@
 .buttonText {
     position: absolute;
     bottom: 50px;
-    width: 100%;
+    left: 100px;
+    width: 250px;
     text-align: center;
     font-size: 24px;
     font-weight: bold;
     color: #000;
-    z-index: 5;
+    z-index: 4;
 } 
