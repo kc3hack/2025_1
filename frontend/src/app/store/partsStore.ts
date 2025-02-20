@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Part, GameState, GamePart, rotatePart, Position, getPartWidth, getPartHeight, getLeftOffset, GamePosition, getConnectedDocks, canPlacePart, GridState, createEmptyGridState, updateGridState, PartCell, Rarity } from '../types/Part';
+import { Part, GameState, GamePart, rotatePart, Position, getPartWidth, getPartHeight, getLeftOffset, GamePosition, getConnectedDocks, canPlacePart, GridState, createEmptyGridState, updateGridState, PartCell, Rarity, PartGrid } from '../types/Part';
 
 // 事前定義されたパーツパターン
 const PREDEFINED_PARTS: Part[] = [
@@ -332,27 +332,38 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             return false;
         }
 
-        // グリッド状態を更新
-        const newGridState = updateGridState(gridState, currentPart, pos.x, pos.y);
-
         // 接続するドックを取得
         const connections = getConnectedDocks(grid, pos.x, pos.y, placedParts);
         
-        // 新しいパーツを作成
+        // 新しいパーツのグリッドを作成（接続されたドックを通常ブロックに変更）
+        const newGrid = grid.map(row => [...row]) as PartGrid;
+        connections.forEach(conn => {
+            // 配置するパーツ側の接続ドックを通常ブロックに変更
+            newGrid[conn.sourceDock.y][conn.sourceDock.x] = 1;
+            
+            // 接続先のパーツ側のドックも通常ブロックに変更
+            const targetPart = placedParts.find(p => p.id === conn.targetPart.id);
+            if (targetPart && targetPart.position) {
+                const targetX = conn.targetDock.x;
+                const targetY = conn.targetDock.y;
+                targetPart.grid[targetY][targetX] = 1;
+                
+                // グリッド状態も更新
+                gridState[targetPart.position.y + targetY][targetPart.position.x + targetX] = 1;
+            }
+        });
+
+        // 新しいパーツを作成（更新したグリッドを使用）
         const newPart: GamePart = {
             ...currentPart,
+            grid: newGrid,  // 更新したグリッドを使用
             position: { x: pos.x, y: pos.y },
             isPlaced: true,
             usedDocks: new Set(connections.map(c => `${c.sourceDock.x},${c.sourceDock.y}`))
         };
 
-        // 接続先のパーツのドックも使用済みにする
-        connections.forEach(conn => {
-            const targetPart = placedParts.find(p => p.id === conn.targetPart.id);
-            if (targetPart) {
-                targetPart.usedDocks.add(`${conn.targetDock.x},${conn.targetDock.y}`);
-            }
-        });
+        // グリッド状態を更新（更新したグリッドを使用）
+        const newGridState = updateGridState(gridState, { ...newPart, grid: newGrid }, pos.x, pos.y);
 
         set(state => ({
             ...state,
