@@ -64,3 +64,15 @@
 .backButton:hover {
   background-color: #d1d5db;
 } 
+
+.backButtonFrame {
+  position: relative;
+  bottom: 32px;
+  left: 20px;
+  width: 9rem;
+  height: 5rem;
+  background: url('/frame/start.png') no-repeat center center;
+  background-size: 100% 100%;
+  z-index: 0;
+  pointer-events: none;
+}
