@@ -30,6 +30,7 @@ const PartsCollection: React.FC = () => {
         <button className={styles.backButton} onClick={goToMap}>
           戻る
         </button>
+        <div className={styles.backButtonFrame} />
       </div>
     </div>
   );
