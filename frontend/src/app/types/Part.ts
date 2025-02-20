@@ -58,9 +58,11 @@ export interface Position {
     y: number;
 }
 
-// パーツの実際の幅を計算（空白を除く）
+// パーツの実際の幅を計算（0以外のセルが存在する範囲）
 export function getPartWidth(grid: PartGrid): number {
-    let minX = 4, maxX = 0;
+    let minX = 4;  // 右端から探索開始
+    let maxX = 0;  // 左端から探索開始
+    
     for (let y = 0; y < 5; y++) {
         for (let x = 0; x < 5; x++) {
             if (grid[y][x] !== 0) {
@@ -72,9 +74,11 @@ export function getPartWidth(grid: PartGrid): number {
     return maxX - minX + 1;
 }
 
-// パーツの実際の高さを計算（空白を除く）
+// パーツの実際の高さを計算（0以外のセルが存在する範囲）
 export function getPartHeight(grid: PartGrid): number {
-    let minY = 4, maxY = 0;
+    let minY = 4;  // 下端から探索開始
+    let maxY = 0;  // 上端から探索開始
+    
     for (let y = 0; y < 5; y++) {
         for (let x = 0; x < 5; x++) {
             if (grid[y][x] !== 0) {
@@ -86,7 +90,7 @@ export function getPartHeight(grid: PartGrid): number {
     return maxY - minY + 1;
 }
 
-// パーツの左端の余白を計算
+// パーツの左端のオフセットを計算
 export function getLeftOffset(grid: PartGrid): number {
     for (let x = 0; x < 5; x++) {
         for (let y = 0; y < 5; y++) {

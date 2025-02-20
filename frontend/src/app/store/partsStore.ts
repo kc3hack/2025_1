@@ -393,8 +393,8 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
     },
 
     moveCurrentPart: (direction) => {
-        const { currentPosition, currentPart, gridState } = get();
-        if (!currentPosition || !currentPart) return;
+        const { currentPart, currentPosition, gridState } = get();
+        if (!currentPart || !currentPosition) return;
 
         set(state => {
             const newPos = { ...currentPosition };
@@ -405,18 +405,30 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             // 移動先の位置を計算
             const getNewPosition = (pos: Position, dir: 'left' | 'right' | 'up' | 'down'): Position | null => {
                 const newPos = { ...pos };
+
+                // パーツの実際の範囲を計算
+                let leftEdge = 4, rightEdge = 0;
+                for (let y = 0; y < 5; y++) {
+                    for (let x = 0; x < 5; x++) {
+                        if (currentPart.grid[y][x] !== 0) {
+                            leftEdge = Math.min(leftEdge, x);
+                            rightEdge = Math.max(rightEdge, x);
+                        }
+                    }
+                }
+
                 switch (dir) {
                     case 'left':
-                        newPos.x = Math.max(-leftOffset, pos.x - 1);
+                        newPos.x = Math.max(-leftEdge, pos.x - 1);  // 左端の実際の位置を考慮
                         break;
                     case 'right':
-                        newPos.x = Math.min(24 - partWidth, pos.x + 1);
+                        newPos.x = Math.min(24 - rightEdge, pos.x + 1);  // 右端の実際の位置を考慮
                         break;
                     case 'up':
                         newPos.y = Math.max(0, pos.y - 1);
                         break;
                     case 'down':
-                        newPos.y = Math.min(25 - partHeight, pos.y + 1);
+                        newPos.y = Math.min(24, pos.y + 1);
                         break;
                 }
                 return newPos;
@@ -424,18 +436,49 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
 
             // 移動先が有効かチェック
             const canMoveTo = (pos: Position): boolean => {
-                for (let i = 0; i < currentPart.grid.length; i++) {
-                    for (let j = 0; j < currentPart.grid[i].length; j++) {
-                        if (currentPart.grid[i][j] === 0) continue;
-                        const checkY = pos.y + i;
-                        const checkX = pos.x + j;
-                        // グリッド範囲外または占有済みのセルには移動できない
-                        if (checkY >= 30 || checkX >= 25 || checkX < 0 || 
-                            (checkY >= 5 && gridState[checkY][checkX] === 1)) {
-                            return false;
+                // パーツの実際の範囲を計算
+                let leftEdge = 4, rightEdge = 0;
+                let topEdge = 4, bottomEdge = 0;
+                
+                // パーツの実際の範囲を計算
+                for (let y = 0; y < 5; y++) {
+                    for (let x = 0; x < 5; x++) {
+                        if (currentPart.grid[y][x] !== 0) {
+                            leftEdge = Math.min(leftEdge, x);
+                            rightEdge = Math.max(rightEdge, x);
+                            topEdge = Math.min(topEdge, y);
+                            bottomEdge = Math.max(bottomEdge, y);
                         }
                     }
                 }
+
+                // グリッドの境界チェック
+                if (currentPosition.mode === 'safeTile') {
+                    // セーフエリアの境界チェック（幅25、高さ5）
+                    if (pos.x + leftEdge < 0 || pos.x + rightEdge >= 25 || 
+                        pos.y + topEdge < 0 || pos.y + bottomEdge >= 5) {
+                        return false;
+                    }
+                } else {
+                    // 通常エリアの境界チェック（幅25、高さ25）
+                    if (pos.x + leftEdge < 0 || pos.x + rightEdge >= 25 || 
+                        pos.y + topEdge < 0 || pos.y + bottomEdge >= 25) {
+                        return false;
+                    }
+                }
+
+                // 他のパーツとの衝突チェック
+                if (currentPosition.mode === 'tile') {
+                    for (let y = topEdge; y <= bottomEdge; y++) {
+                        for (let x = leftEdge; x <= rightEdge; x++) {
+                            if (currentPart.grid[y][x] !== 0 && 
+                                gridState[pos.y + y]?.[pos.x + x] === 1) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+
                 return true;
             };
 
