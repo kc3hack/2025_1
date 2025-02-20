@@ -27,4 +27,16 @@
     -moz-user-drag: none;  /* Firefox用 */
     -o-user-drag: none;  /* Opera用 */
     z-index: 1;  /* 画像を下に */
+}
+
+.dockUnused {
+    background-color: rgba(255, 255, 0, 0.5);  /* #FFFF00 with 50% opacity */
+}
+
+.dockUsed {
+    background-color: rgba(255, 255, 0, 0);    /* #FFFF00 with 0% opacity */
+}
+
+.dockFirstUnused {
+    background-color: rgba(0, 255, 200, 0.5);  /* #00FFC8 with 50% opacity */
 } 
