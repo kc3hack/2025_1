@@ -1,8 +1,16 @@
+'use client'; // クライアントコンポーネントとしてマーク
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
 
 const PartsCollection: React.FC = () => {
   const parts = Array.from({ length: 64 }, (_, index) => `Part ${index + 1}`);
+  const router = useRouter();
+
+  const goToMap = () => {
+    router.push('/map');
+  };
 
   return (
     <div className={styles.container}>
@@ -19,7 +27,7 @@ const PartsCollection: React.FC = () => {
             ))}
           </div>
         </div>
-        <button className={styles.backButton}>
+        <button className={styles.backButton} onClick={goToMap}>
           戻る
         </button>
       </div>

@@ -1,5 +1,8 @@
+'use client'; // クライアントコンポーネントとしてマーク
+
 import React from 'react';
 import styles from './styles.module.css';
+import { useRouter } from 'next/navigation';
 
 const StartPage: React.FC = () => {
   return (

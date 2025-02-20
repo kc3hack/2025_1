@@ -1,4 +1,7 @@
+'use client'; // クライアントコンポーネントとしてマーク
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
 
 const ScoreCollection: React.FC = () => {
@@ -8,6 +11,11 @@ const ScoreCollection: React.FC = () => {
     { rank: 3, shape: 'Part 3', score: 80 },
     // 必要に応じて他のパーツを追加
   ];
+  const router = useRouter();
+
+  const goToMap = () => {
+    router.push('/map');
+  };
 
   return (
     <div className={styles.container}>
@@ -32,7 +40,7 @@ const ScoreCollection: React.FC = () => {
           <div className={styles.score}>50pt</div>
           <div className={styles.score}>30pt</div>
         </div>
-        <button className={styles.button}>
+        <button className={styles.backButton} onClick={goToMap}>
           戻る
         </button>
       </div>
