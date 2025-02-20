@@ -1,30 +1,47 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id Int @id 
+model User {
+  userID    String   @id
+  created_at DateTime @default(now())
+  parts     UserPart[]
+  fortresses Fortress[]
 }
 
+model Part {
+  part_number    Int      @id
+  shape          String
+  material_number Int
+  material       Material @relation(fields: [material_number], references: [material_number])
+  userParts      UserPart[]
+}
 
+model Material {
+  material_number Int      @id
+  part_material   String
+  parts           Part[]   // 逆リレーションを追加
+}
 
-{10,3},{@@@@@@@@@@},{@@......@@},{@@@@@@@@@@@@}
+model UserPart {
+  id          Int   @id @default(autoincrement())
+  user        User  @relation(fields: [userID], references: [userID])
+  userID      String
+  part        Part  @relation(fields: [part_number], references: [part_number])
+  part_number Int
+  domination  Float
+  created_at  DateTime @default(now())
+}
 
-row = part_number[0][0]   #列
-calam = part_number[0][1] #行
-
-for i in range(1:calam+1):
-  for j in range(row):
-
-mater
+model Fortress {
+  id                 Int     @id @default(autoincrement())
+  user               User    @relation(fields: [userID], references: [userID])
+  userID             String
+  completed_fortress String
+  created_at         DateTime @default(now())
+}
