@@ -1,224 +1,248 @@
 import { create } from 'zustand';
-import { Part, GameState, GamePart, rotatePart, Position, getPartWidth, getPartHeight, getLeftOffset, GamePosition, getConnectedDocks, canPlacePart, GridState, createEmptyGridState, updateGridState } from '../types/Part';
+import { Part, GameState, GamePart, rotatePart, Position, getPartWidth, getPartHeight, getLeftOffset, GamePosition, getConnectedDocks, canPlacePart, GridState, createEmptyGridState, updateGridState, PartCell, Rarity } from '../types/Part';
 
 // 事前定義されたパーツパターン
 const PREDEFINED_PARTS: Part[] = [
-    // Soil (レア度1) パーツ
-    {
-        id: 'soil1',
+    //小さいL字
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}1`,
         grid: [
-            [0, 2, 1, 0, 0],
-            [0, 1, 1, 0, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
+            [0, 2, 0, 0, 0] as PartCell[],
+            [0, 1, 0, 0, 0] as PartCell[],
+            [0, 1, 0, 0, 0] as PartCell[],
+            [0, 1, 2, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
         ],
-        rarity: 1,
-        points: 100,
-        imageUrl: '/parts/quality/soil/soil.svg'
-    },
-    {
-        id: 'soil2',
-        grid: [
-            [0, 2, 1, 2, 0],
-            [0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
-        ],
-        rarity: 1,
-        points: 100,
-        imageUrl: '/parts/quality/soil/soil.svg'
-    },
-    {
-        id: 'soil3',
-        grid: [
-            [0, 2, 1, 1, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
-        ],
-        rarity: 1,
-        points: 100,
-        imageUrl: '/parts/quality/soil/soil.svg'
-    },
-    {
-        id: 'soil4',
-        grid: [
-            [0, 2, 1, 0, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
-        ],
-        rarity: 1,
-        points: 100,
-        imageUrl: '/parts/quality/soil/soil.svg'
-    },
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
 
-    // Bronze (レア度2) パーツ
-    {
-        id: 'bronze1',
+    //大きいL字
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}2`,
         grid: [
-            [0, 2, 1, 0, 0],
-            [0, 1, 1, 0, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
+            [0, 2, 0, 0, 0] as PartCell[],
+            [0, 1, 0, 0, 0] as PartCell[],
+            [0, 1, 0, 0, 0] as PartCell[],
+            [0, 1, 1, 2, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
         ],
-        rarity: 2,
-        points: 200,
-        imageUrl: '/parts/quality/bronze/bronze.svg'
-    },
-    {
-        id: 'bronze2',
-        grid: [
-            [0, 2, 1, 2, 0],
-            [0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
-        ],
-        rarity: 2,
-        points: 200,
-        imageUrl: '/parts/quality/bronze/bronze.svg'
-    },
-    {
-        id: 'bronze3',
-        grid: [
-            [0, 2, 1, 1, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
-        ],
-        rarity: 2,
-        points: 200,
-        imageUrl: '/parts/quality/bronze/bronze.svg'
-    },
-    {
-        id: 'bronze4',
-        grid: [
-            [0, 2, 1, 0, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
-        ],
-        rarity: 2,
-        points: 200,
-        imageUrl: '/parts/quality/bronze/bronze.svg'
-    },
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
 
-    // Iron (レア度3) パーツ
-    {
-        id: 'iron1',
+    //もっと小さいL字
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}3`,
         grid: [
-            [0, 2, 1, 0, 0],
-            [0, 1, 1, 0, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
+            [0, 0, 0, 0, 0] as PartCell[],
+            [0, 2, 0, 0, 0] as PartCell[],
+            [0, 1, 2, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
         ],
-        rarity: 3,
-        points: 300,
-        imageUrl: '/parts/quality/iron/iron.svg'
-    },
-    {
-        id: 'iron2',
-        grid: [
-            [0, 2, 1, 2, 0],
-            [0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
-        ],
-        rarity: 3,
-        points: 300,
-        imageUrl: '/parts/quality/iron/iron.svg'
-    },
-    {
-        id: 'iron3',
-        grid: [
-            [0, 2, 1, 1, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
-        ],
-        rarity: 3,
-        points: 300,
-        imageUrl: '/parts/quality/iron/iron.svg'
-    },
-    {
-        id: 'iron4',
-        grid: [
-            [0, 2, 1, 0, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
-        ],
-        rarity: 3,
-        points: 300,
-        imageUrl: '/parts/quality/iron/iron.svg'
-    },
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
 
-    // Diamond (レア度4) パーツ
-    {
-        id: 'diamond1',
+    //l棒
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}4`,
         grid: [
-            [0, 2, 1, 0, 0],
-            [0, 1, 1, 0, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
+            [0, 0, 2, 0, 0] as PartCell[],
+            [0, 0, 1, 0, 0] as PartCell[],
+            [0, 0, 1, 0, 0] as PartCell[],
+            [0, 0, 2, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
         ],
-        rarity: 4,
-        points: 400,
-        imageUrl: '/parts/quality/diamond/diamond.svg'
-    },
-    {
-        id: 'diamond2',
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //角
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}5`,
         grid: [
-            [0, 2, 1, 2, 0],
-            [0, 1, 1, 1, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
+            [2, 0, 0, 0, 0] as PartCell[],
+            [1, 0, 0, 0, 0] as PartCell[],
+            [1, 0, 0, 0, 0] as PartCell[],
+            [1, 0, 0, 0, 0] as PartCell[],
+            [1, 1, 1, 1, 2] as PartCell[]
         ],
-        rarity: 4,
-        points: 400,
-        imageUrl: '/parts/quality/diamond/diamond.svg'
-    },
-    {
-        id: 'diamond3',
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //s字
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}6`,
         grid: [
-            [0, 2, 1, 1, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
+            [0, 2, 0, 0, 0] as PartCell[],
+            [0, 1, 0, 0, 0] as PartCell[],
+            [0, 1, 1, 0, 0] as PartCell[],
+            [0, 0, 1, 0, 0] as PartCell[],
+            [0, 0, 2, 0, 0] as PartCell[]
         ],
-        rarity: 4,
-        points: 400,
-        imageUrl: '/parts/quality/diamond/diamond.svg'
-    },
-    {
-        id: 'diamond4',
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //短いl棒
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}7`,
         grid: [
-            [0, 2, 1, 0, 0],
-            [0, 1, 1, 2, 0],
-            [0, 0, 1, 0, 0],
-            [0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0]
+            [0, 0, 0, 0, 0] as PartCell[],
+            [0, 0, 2, 0, 0] as PartCell[],
+            [0, 0, 1, 0, 0] as PartCell[],
+            [0, 0, 2, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
         ],
-        rarity: 4,
-        points: 400,
-        imageUrl: '/parts/quality/diamond/diamond.svg'
-    }
-];
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //逆s字
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}8`,
+        grid: [
+            [0, 0, 0, 2, 0] as PartCell[],
+            [0, 0, 0, 1, 0] as PartCell[],
+            [0, 0, 1, 1, 0] as PartCell[],
+            [0, 0, 1, 0, 0] as PartCell[],
+            [0, 0, 2, 0, 0] as PartCell[]
+        ],
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //階段
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}9`,
+        grid: [
+            [2, 1, 0, 0, 0] as PartCell[],
+            [0, 1, 1, 0, 0] as PartCell[],
+            [0, 0, 1, 1, 0] as PartCell[],
+            [0, 0, 0, 1, 2] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
+        ],
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //ト字
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}10`,
+        grid: [
+            [0, 0, 0, 0, 0] as PartCell[],
+            [0, 2, 0, 0, 0] as PartCell[],
+            [0, 1, 1, 0, 0] as PartCell[],
+            [0, 2, 0, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
+        ],
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //小さいs字
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}11`,
+        grid: [
+            [0, 0, 0, 0, 0] as PartCell[],
+            [0, 2, 0, 0, 0] as PartCell[],
+            [0, 1, 1, 0, 0] as PartCell[],
+            [0, 0, 2, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
+        ],
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //でかい棒
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}12`,
+        grid: [
+            [0, 0, 2, 0, 0] as PartCell[],
+            [0, 0, 1, 0, 0] as PartCell[],
+            [0, 0, 1, 0, 0] as PartCell[],
+            [0, 0, 1, 0, 0] as PartCell[],
+            [0, 0, 2, 0, 0] as PartCell[]
+        ],
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //小さい角
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}13`,
+        grid: [
+            [0, 0, 0, 0, 0] as PartCell[],
+            [0, 2, 0, 0, 0] as PartCell[],
+            [0, 1, 0, 0, 0] as PartCell[],
+            [0, 1, 1, 2, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
+        ],
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //逆L字  
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}14`,
+        grid: [
+            [0, 0, 0, 0, 0] as PartCell[],
+            [0, 0, 0, 2, 0] as PartCell[],
+            [0, 0, 0, 1, 0] as PartCell[],
+            [0, 0, 2, 1, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
+        ],
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //逆L字
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}15`,
+        grid: [
+            [0, 0, 0, 2, 0] as PartCell[],
+            [0, 0, 0, 1, 0] as PartCell[],
+            [0, 0, 0, 1, 0] as PartCell[],
+            [0, 2, 1, 1, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
+        ],
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    })),
+
+    //逆L字
+    ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
+        id: `${quality}16`,
+        grid: [
+            [0, 0, 0, 2, 0] as PartCell[],
+            [0, 0, 0, 1, 0] as PartCell[],
+            [0, 0, 0, 1, 0] as PartCell[],
+            [0, 2, 1, 1, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[]
+        ],
+        rarity: (index + 1) as Rarity,
+        points: (index + 1) * 100,
+        imageUrl: `/parts/quality/${quality}/${quality}.svg`
+    }))
+].flat();  // mapの結果を1つの配列に平坦化
 
 interface PartsStore extends GameState {
     initializeGame: () => void;
@@ -236,7 +260,7 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
     placedParts: [],
     currentPart: null,
     currentPosition: {
-        safeTile: { x: 10, y: 2 },
+        safeTile: { x: 10, y: 0 },
         mode: 'safeTile'
     },
     score: 0,
@@ -258,7 +282,7 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             placedParts: [],
             currentPart: selectedParts[0],
             currentPosition: {
-                safeTile: { x: 10, y: 2 },
+                safeTile: { x: 10, y: 0 },
                 mode: 'safeTile'
             },
             score: 0,
@@ -336,7 +360,7 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             currentPart: state.availableParts[1] || null,
             availableParts: state.availableParts.slice(1),
             currentPosition: {
-                safeTile: { x: 10, y: 2 },
+                safeTile: { x: 10, y: 0 },
                 mode: 'safeTile'
             },
             score: state.score + currentPart.points,
