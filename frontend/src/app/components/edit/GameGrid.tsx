@@ -3,29 +3,118 @@
 import { useEffect } from 'react';
 import styles from './GameGrid.module.css'
 import { usePartsStore } from '@/app/store/partsStore';
+import { Position } from '@/app/types/Part';
 
 interface TileProps {
     isSafe?: boolean
     // 将来の拡張用にプロパティを追加可能
 }
 
-interface Position {
-    x: number;
-    y: number;
-}
-
 export default function GameGrid() {
-    const { currentPart, initializeGame } = usePartsStore();
+    const { currentPart, currentPosition, placedParts, initializeGame, moveCurrentPart } = usePartsStore();
 
     useEffect(() => {
         initializeGame();
     }, [initializeGame]);
 
-    const renderCurrentPart = (row: number, col: number) => {
-        if (!currentPart) return null;
-        
-        // パーツの表示ロジックは後で実装
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            switch (e.key) {
+                case 'ArrowLeft':
+                    moveCurrentPart('left');
+                    break;
+                case 'ArrowRight':
+                    moveCurrentPart('right');
+                    break;
+                case 'ArrowDown':
+                    moveCurrentPart('down');
+                    break;
+                case 'ArrowUp':
+                    moveCurrentPart('up');
+                    break;
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [moveCurrentPart]);
+
+    const renderPlacedParts = (row: number, col: number) => {
+        // 設置済みパーツの描画
+        for (const part of placedParts) {
+            if (!part.position) continue;
+
+            const relativeRow = row - part.position.y;
+            const relativeCol = col - part.position.x;
+
+            if (relativeRow >= 0 && relativeRow < 5 && 
+                relativeCol >= 0 && relativeCol < 5) {
+                const cell = part.grid[relativeRow][relativeCol];
+                if (cell === 0) continue;
+
+                // ドックの表示ルールを適用
+                let imageUrl = part.imageUrl;
+                if (cell === 2) {
+                    const isFirstPart = part === placedParts[0];
+                    const isDockUsed = part.usedDocks.has(`${relativeCol},${relativeRow}`);
+                    
+                    if (isFirstPart && !isDockUsed && placedParts.length > 1) {
+                        // 最初のパーツの未接続ドックのみsoilDockLast
+                        imageUrl = '/parts/quality/soilDockLast.svg';
+                    } else {
+                        // その他のドックは通常のsoilDock
+                        imageUrl = '/parts/quality/soilDock.svg';
+                    }
+                }
+
+                return (
+                    <div className={styles.partCell}>
+                        <img 
+                            src={imageUrl}
+                            alt="part" 
+                            className={styles.partImage}
+                            draggable={false}
+                        />
+                    </div>
+                );
+            }
+        }
         return null;
+    };
+
+    const renderCurrentPart = (row: number, col: number, isSafe: boolean) => {
+        if (!currentPart || !currentPart.grid || !currentPosition) return null;
+        
+        // パーツの位置を計算
+        let pos: Position | undefined;
+        if (isSafe && currentPosition.safeTile) {
+            pos = currentPosition.safeTile;
+        } else if (!isSafe && currentPosition.tile) {
+            pos = currentPosition.tile;
+        }
+        if (!pos) return null;
+
+        const relativeRow = row - pos.y;
+        const relativeCol = col - pos.x;
+
+        if (relativeRow < 0 || relativeRow >= 5 || relativeCol < 0 || relativeCol >= 5) {
+            return null;
+        }
+
+        const cell = currentPart.grid[relativeRow][relativeCol];
+        if (cell === 0) return null;
+
+        return (
+            <div className={`${styles.partCell} ${styles.partCellActive}`}>
+                <img 
+                    src={cell === 1 ? currentPart.imageUrl : 
+                         cell === 2 ? '/parts/quality/soilDock.svg' : ''}
+                    alt="part" 
+                    className={styles.partImage}
+                    draggable={false}
+                />
+            </div>
+        );
     };
 
     const renderTiles = (rows: number, cols: number, isSafe: boolean) => {
@@ -42,7 +131,8 @@ export default function GameGrid() {
                             className={styles.tileImage}
                             draggable={false}
                         />
-                        {renderCurrentPart(row, col)}
+                        {renderPlacedParts(row, col)}
+                        {renderCurrentPart(row, col, isSafe)}
                     </div>
                 ))}
             </div>
@@ -51,8 +141,8 @@ export default function GameGrid() {
 
     return (
         <div className={styles.grid}>
-            {renderTiles(5, 25, true)}  {/* セーフエリア */}
-            {renderTiles(25, 25, false)}  {/* 通常エリア */}
+            {renderTiles(5, 25, true)}   {/* セーフエリア */}
+            {renderTiles(25, 25, false)} {/* 通常エリア */}
         </div>
     )
 } 

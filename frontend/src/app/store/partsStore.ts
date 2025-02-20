@@ -1,9 +1,8 @@
 import { create } from 'zustand';
-import { Part, GameState, GamePart, rotatePart } from '../types/Part';
+import { Part, GameState, GamePart, rotatePart, Position, getPartWidth, getPartHeight, getLeftOffset, GamePosition, getConnectedDocks, canPlacePart, GridState, createEmptyGridState, updateGridState } from '../types/Part';
 
 // 事前定義されたパーツパターン
 const PREDEFINED_PARTS: Part[] = [
-    // 例として1つ定義。実際には16種類定義する
     {
         id: 'part1',
         grid: [
@@ -17,24 +16,71 @@ const PREDEFINED_PARTS: Part[] = [
         points: 100,
         imageUrl: '/parts/quality/soil.svg'
     },
-    // ... 他のパーツ定義
+    {
+        id: 'part2',
+        grid: [
+            [0, 2, 1, 2, 0],
+            [0, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 1,
+        points: 100,
+        imageUrl: '/parts/quality/soil.svg'
+    },
+    {
+        id: 'part3',
+        grid: [
+            [0, 2, 1, 1, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 1,
+        points: 100,
+        imageUrl: '/parts/quality/soil.svg'
+    },
+    {
+        id: 'part4',
+        grid: [
+            [0, 2, 1, 0, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 1,
+        points: 100,
+        imageUrl: '/parts/quality/soil.svg'
+    }
 ];
 
 interface PartsStore extends GameState {
     initializeGame: () => void;
     rotatePart: () => void;
-    placePart: (x: number, y: number) => boolean;
+    placePart: () => boolean;
     selectNextPart: () => void;
+    moveCurrentPart: (direction: 'left' | 'right' | 'up' | 'down') => void;
+    currentPosition: GamePosition | null;
+    isSafeTileMode: boolean; // safeTileモードかどうかのフラグ
+    gridState: GridState;
 }
 
 export const usePartsStore = create<PartsStore>((set, get) => ({
     availableParts: [],
     placedParts: [],
     currentPart: null,
+    currentPosition: {
+        safeTile: { x: 10, y: 2 },
+        mode: 'safeTile'
+    },
     score: 0,
+    isSafeTileMode: true, // 初期状態はsafeTileモード
+    gridState: createEmptyGridState(),
 
     initializeGame: () => {
-        // ランダムに10個のパーツを選択
         const selectedParts: GamePart[] = [];
         for (let i = 0; i < 10; i++) {
             const randomPart = PREDEFINED_PARTS[Math.floor(Math.random() * PREDEFINED_PARTS.length)];
@@ -50,13 +96,21 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             availableParts: selectedParts,
             placedParts: [],
             currentPart: selectedParts[0],
-            score: 0
+            currentPosition: {
+                safeTile: { x: 10, y: 2 },
+                mode: 'safeTile'
+            },
+            score: 0,
+            gridState: createEmptyGridState()
         });
     },
 
     rotatePart: () => {
-        const { currentPart } = get();
-        if (!currentPart) return;
+        const { currentPart, currentPosition } = get();
+        if (!currentPart || !currentPosition) return;
+
+        // safeTile内では回転不可
+        if (currentPosition.mode === 'safeTile') return;
 
         set(state => ({
             ...state,
@@ -67,32 +121,68 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
         }));
     },
 
-    placePart: (x: number, y: number) => {
-        const { currentPart, availableParts, placedParts, score } = get();
-        if (!currentPart) return false;
-
-        // 設置の検証ロジックは後で実装
-        const isValidPlacement = true; // 仮の実装
-
-        if (isValidPlacement) {
-            const newPlacedParts = [...placedParts, {
-                ...currentPart,
-                position: { x, y },
-                isPlaced: true
-            }];
-
-            const remainingParts = availableParts.slice(1);
-            
-            set(state => ({
-                ...state,
-                placedParts: newPlacedParts,
-                availableParts: remainingParts,
-                currentPart: remainingParts[0] || null,
-                score: score + currentPart.points
-            }));
-            return true;
+    placePart: () => {
+        const { currentPart, currentPosition, placedParts, gridState } = get();
+        if (!currentPart || !currentPosition || currentPosition.mode === 'safeTile') {
+            console.log('設置失敗: safeTile内または無効な状態');
+            return false;
         }
-        return false;
+
+        const pos = currentPosition.tile!;
+
+        // グリッド状態をチェック
+        for (let i = 0; i < currentPart.grid.length; i++) {
+            for (let j = 0; j < currentPart.grid[i].length; j++) {
+                if (currentPart.grid[i][j] !== 0) {
+                    if (gridState[pos.y + i][pos.x + j] === 1) {
+                        console.log('設置失敗: 既に占有されているセル');
+                        return false;
+                    }
+                }
+            }
+        }
+
+        // ドック接続チェック
+        if (!canPlacePart(currentPart.grid, pos.x, pos.y, placedParts)) {
+            return false;
+        }
+
+        // グリッド状態を更新
+        const newGridState = updateGridState(gridState, currentPart, pos.x, pos.y);
+
+        // 接続するドックを取得
+        const connections = getConnectedDocks(currentPart.grid, pos.x, pos.y, placedParts);
+        
+        // 新しいパーツを作成
+        const newPart: GamePart = {
+            ...currentPart,
+            position: { x: pos.x, y: pos.y },
+            isPlaced: true,
+            usedDocks: new Set(connections.map(c => `${c.sourceDock.x},${c.sourceDock.y}`))
+        };
+
+        // 接続先のパーツのドックも使用済みにする
+        connections.forEach(conn => {
+            const targetPart = placedParts.find(p => p.id === conn.targetPart.id);
+            if (targetPart) {
+                targetPart.usedDocks.add(`${conn.targetDock.x},${conn.targetDock.y}`);
+            }
+        });
+
+        set(state => ({
+            ...state,
+            placedParts: [...placedParts, newPart],
+            currentPart: state.availableParts[0] || null,
+            availableParts: state.availableParts.slice(1),
+            currentPosition: {
+                safeTile: { x: 10, y: 2 },
+                mode: 'safeTile'
+            },
+            score: state.score + currentPart.points,
+            gridState: newGridState
+        }));
+
+        return true;
     },
 
     selectNextPart: () => {
@@ -104,5 +194,81 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             currentPart: availableParts[0],
             availableParts: availableParts.slice(1)
         }));
+    },
+
+    moveCurrentPart: (direction) => {
+        const { currentPosition, currentPart, gridState } = get();
+        if (!currentPosition || !currentPart) return;
+
+        set(state => {
+            const newPos = { ...currentPosition };
+            const partHeight = getPartHeight(currentPart.grid);
+            const partWidth = getPartWidth(currentPart.grid);
+            const leftOffset = getLeftOffset(currentPart.grid);
+
+            // 移動先の位置を計算
+            const getNewPosition = (pos: Position, dir: 'left' | 'right' | 'up' | 'down'): Position | null => {
+                const newPos = { ...pos };
+                switch (dir) {
+                    case 'left':
+                        newPos.x = Math.max(-leftOffset, pos.x - 1);
+                        break;
+                    case 'right':
+                        newPos.x = Math.min(24 - partWidth, pos.x + 1);
+                        break;
+                    case 'up':
+                        newPos.y = Math.max(0, pos.y - 1);
+                        break;
+                    case 'down':
+                        newPos.y = Math.min(25 - partHeight, pos.y + 1);
+                        break;
+                }
+                return newPos;
+            };
+
+            // 移動先が有効かチェック
+            const canMoveTo = (pos: Position): boolean => {
+                for (let i = 0; i < currentPart.grid.length; i++) {
+                    for (let j = 0; j < currentPart.grid[i].length; j++) {
+                        if (currentPart.grid[i][j] === 0) continue;
+                        const checkY = pos.y + i;
+                        const checkX = pos.x + j;
+                        // グリッド範囲外または占有済みのセルには移動できない
+                        if (checkY >= 30 || checkX >= 25 || checkX < 0 || 
+                            (checkY >= 5 && gridState[checkY][checkX] === 1)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            };
+
+            if (newPos.mode === 'safeTile') {
+                const pos = newPos.safeTile!;
+                if (direction === 'down') {
+                    pos.y += 1;
+                    if (pos.y + partHeight > 5) {
+                        newPos.mode = 'tile';
+                        newPos.tile = { x: pos.x, y: 0 };
+                        newPos.safeTile = undefined;
+                    }
+                } else {
+                    const newPosition = getNewPosition(pos, direction);
+                    if (newPosition && canMoveTo(newPosition)) {
+                        pos.x = newPosition.x;
+                        pos.y = newPosition.y;
+                    }
+                }
+            } else {
+                const pos = newPos.tile!;
+                const newPosition = getNewPosition(pos, direction);
+                if (newPosition && canMoveTo(newPosition)) {
+                    pos.x = newPosition.x;
+                    pos.y = newPosition.y;
+                }
+            }
+
+            return { ...state, currentPosition: newPos };
+        });
     }
 })); 
