@@ -253,6 +253,7 @@ interface PartsStore extends GameState {
     currentPosition: GamePosition | null;
     isSafeTileMode: boolean; // safeTileモードかどうかのフラグ
     gridState: GridState;
+    isGameOver: boolean;  // ゲーム終了フラグを追加
 }
 
 export const usePartsStore = create<PartsStore>((set, get) => ({
@@ -266,6 +267,7 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
     score: 0,
     isSafeTileMode: true, // 初期状態はsafeTileモード
     gridState: createEmptyGridState(),
+    isGameOver: false,  // 初期状態を追加
 
     initializeGame: () => {
         // 重複のない10個のパーツを選択
@@ -286,7 +288,8 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
                 mode: 'safeTile'
             },
             score: 0,
-            gridState: createEmptyGridState()
+            gridState: createEmptyGridState(),
+            isGameOver: false
         });
     },
 
@@ -365,17 +368,39 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
         // グリッド状態を更新（更新したグリッドを使用）
         const newGridState = updateGridState(gridState, { ...newPart, grid: newGrid }, pos.x, pos.y);
 
+        // 全てのパーツの未接続ドックをチェック
+        const checkAllDocsConnected = () => {
+            // 新しく配置したパーツも含めて全パーツをチェック
+            const allParts = [...placedParts, newPart];
+            
+            // 全パーツの未接続ドックを探す
+            for (const part of allParts) {
+                for (let y = 0; y < part.grid.length; y++) {
+                    for (let x = 0; x < part.grid[y].length; x++) {
+                        // ドックがあり、かつ未接続の場合
+                        if (part.grid[y][x] === 2 && !part.usedDocks.has(`${x},${y}`)) {
+                            return false;  // 未接続のドックが見つかった
+                        }
+                    }
+                }
+            }
+            return true;  // 全てのドックが接続済み
+        };
+
+        const isAllConnected = checkAllDocsConnected();
+
         set(state => ({
             ...state,
             placedParts: [...placedParts, newPart],
-            currentPart: state.availableParts[1] || null,
-            availableParts: state.availableParts.slice(1),
+            currentPart: isAllConnected ? null : state.availableParts[1] || null,
+            availableParts: isAllConnected ? [] : state.availableParts.slice(1),
             currentPosition: {
                 safeTile: { x: 10, y: 0 },
                 mode: 'safeTile'
             },
             score: state.score + currentPart.points,
-            gridState: newGridState
+            gridState: newGridState,
+            isGameOver: isAllConnected  // 全て接続されていたらゲーム終了
         }));
 
         return true;
