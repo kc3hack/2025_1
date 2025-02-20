@@ -11,7 +11,7 @@ interface TileProps {
 }
 
 export default function GameGrid() {
-    const { currentPart, currentPosition, placedParts, initializeGame, moveCurrentPart } = usePartsStore();
+    const { currentPart, currentPosition, placedParts, initializeGame, moveCurrentPart, placePart } = usePartsStore();
 
     useEffect(() => {
         initializeGame();
@@ -32,12 +32,15 @@ export default function GameGrid() {
                 case 'ArrowUp':
                     moveCurrentPart('up');
                     break;
+                case 'Enter':
+                    placePart();
+                    break;
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [moveCurrentPart]);
+    }, [moveCurrentPart, placePart]);
 
     const renderPlacedParts = (row: number, col: number) => {
         // 設置済みパーツの描画

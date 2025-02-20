@@ -120,22 +120,17 @@ export function canPlacePart(
     // 2. 他のパーツとの重なりチェック
     for (let i = 0; i < grid.length; i++) {
         for (let j = 0; j < grid[i].length; j++) {
-            if (grid[i][j] === 0) continue; // 設置するパーツの空白部分はスキップ
-
+            if (grid[i][j] === 0) continue;
             const checkX = x + j;
             const checkY = y + i;
 
-            // 設置済みの各パーツとチェック
             for (const placedPart of placedParts) {
                 if (!placedPart.position) continue;
-
                 const px = placedPart.position.x;
                 const py = placedPart.position.y;
 
-                // 設置済みパーツの範囲内かチェック
                 if (checkX >= px && checkX < px + placedPart.grid[0].length &&
                     checkY >= py && checkY < py + placedPart.grid.length) {
-                    // 設置済みパーツの対応するセルが空白でない場合は重なりとみなす
                     const placedCell = placedPart.grid[checkY - py][checkX - px];
                     if (placedCell !== 0) {
                         console.log('重なり検出:', checkX, checkY);
@@ -146,48 +141,61 @@ export function canPlacePart(
         }
     }
 
-    // 3. ドック接続ルールのチェック
-    if (placedParts.length > 0) {
-        const firstPart = placedParts[0];
-        const dockPositions = getDockPositions(grid);
-        let hasValidConnection = false;
+    // 3. 初回パーツはチェック不要
+    if (placedParts.length === 0) {
+        return true;
+    }
 
-        for (const dock of dockPositions) {
-            const dockX = x + dock.x;
-            const dockY = y + dock.y;
-            
-            for (const placedPart of placedParts) {
-                if (!placedPart.position) continue;
-                
-                const placedDocks = getDockPositions(placedPart.grid);
-                for (const placedDock of placedDocks) {
-                    const pdx = placedPart.position.x + placedDock.x;
-                    const pdy = placedPart.position.y + placedDock.y;
-                    
-                    // ドックが隣接している場合
-                    if (Math.abs(dockX - pdx) + Math.abs(dockY - pdy) === 1) {
-                        // 2つ目のパーツは自由に接続可能
-                        if (placedParts.length === 1) {
-                            hasValidConnection = true;
-                            continue;
-                        }
+    // 4. ドック接続チェック
+    const dockPositions = getDockPositions(grid);
+    let hasValidConnection = false;
 
-                        // 3つ目以降のパーツの場合
-                        const isConnectingToFirstPart = placedPart === firstPart;
-                        const isDockUnused = !placedPart.usedDocks.has(`${placedDock.x},${placedDock.y}`);
+    // 各ドックについて接続チェック
+    for (const dock of dockPositions) {
+        const dockX = x + dock.x;
+        const dockY = y + dock.y;
 
-                        // 最初のパーツの未使用ドック（soilDockLast）への接続は禁止
-                        if (isConnectingToFirstPart && isDockUnused) {
-                            continue;
-                        }
+        for (const placedPart of placedParts) {
+            if (!placedPart.position) continue;
 
-                        hasValidConnection = true;
+            const placedDocks = getDockPositions(placedPart.grid);
+            for (const placedDock of placedDocks) {
+                const pdx = placedPart.position.x + placedDock.x;
+                const pdy = placedPart.position.y + placedDock.y;
+
+                // 隣接チェック
+                if (Math.abs(dockX - pdx) + Math.abs(dockY - pdy) === 1) {
+                    console.log('ドック接続検出:', {
+                        part: placedPart.id,
+                        isFirstPart: placedPart === placedParts[0],
+                        isDockUsed: placedPart.usedDocks.has(`${placedDock.x},${placedDock.y}`),
+                        dockPos: { x: dockX, y: dockY },
+                        placedDockPos: { x: pdx, y: pdy }
+                    });
+
+                    // 2つ目のパーツは自由に接続可能
+                    if (placedParts.length === 1) {
+                        return true;
                     }
+
+                    // 3つ目以降のパーツの場合
+                    const isFirstPart = placedPart === placedParts[0];
+                    const isDockUsed = placedPart.usedDocks.has(`${placedDock.x},${placedDock.y}`);
+
+                    // 最初のパーツの未使用ドックには接続不可
+                    if (isFirstPart && !isDockUsed) {
+                        continue;
+                    }
+
+                    hasValidConnection = true;
                 }
             }
         }
-        
-        if (!hasValidConnection) return false;
+    }
+
+    if (!hasValidConnection) {
+        console.log('接続条件を満たしていません');
+        return false;
     }
 
     return true;

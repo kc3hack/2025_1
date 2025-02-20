@@ -107,11 +107,9 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
 
     rotatePart: () => {
         const { currentPart, currentPosition } = get();
-        if (!currentPart || !currentPosition) return;
+        if (!currentPart || !currentPosition || currentPosition.mode === 'safeTile') return;
 
-        // safeTile内では回転不可
-        if (currentPosition.mode === 'safeTile') return;
-
+        // 回転は自由に可能
         set(state => ({
             ...state,
             currentPart: {
@@ -129,11 +127,12 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
         }
 
         const pos = currentPosition.tile!;
+        const grid = currentPart.grid;
 
         // グリッド状態をチェック
-        for (let i = 0; i < currentPart.grid.length; i++) {
-            for (let j = 0; j < currentPart.grid[i].length; j++) {
-                if (currentPart.grid[i][j] !== 0) {
+        for (let i = 0; i < grid.length; i++) {
+            for (let j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] !== 0) {
                     if (gridState[pos.y + i][pos.x + j] === 1) {
                         console.log('設置失敗: 既に占有されているセル');
                         return false;
@@ -142,8 +141,9 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             }
         }
 
-        // ドック接続チェック
-        if (!canPlacePart(currentPart.grid, pos.x, pos.y, placedParts)) {
+        // 設置位置で接続可能かチェック
+        if (!canPlacePart(grid, pos.x, pos.y, placedParts)) {
+            console.log('設置失敗: 接続条件を満たしていません');
             return false;
         }
 
@@ -151,7 +151,7 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
         const newGridState = updateGridState(gridState, currentPart, pos.x, pos.y);
 
         // 接続するドックを取得
-        const connections = getConnectedDocks(currentPart.grid, pos.x, pos.y, placedParts);
+        const connections = getConnectedDocks(grid, pos.x, pos.y, placedParts);
         
         // 新しいパーツを作成
         const newPart: GamePart = {
