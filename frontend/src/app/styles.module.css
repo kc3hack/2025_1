@@ -19,16 +19,17 @@
   width: 600px;
   height: 80px;
   text-align: center;
+  align-items: center;
   margin-top: 150px;
 }
 
 .title {
-  font-size: 6rem;
+  font-size: 4rem;
   font-weight: bold;
 }
 
 .form {
-  margin-top: 300px;
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,24 +37,25 @@
 }
 
 .input {
-  width: 500px;
-  height: 50px;
+  width: 400px;
+  height: 20px;
   padding: 0.5rem;
   font-size: 1.125rem;
   border: 1px solid #d1d5db;
   border-radius: 0.25rem;
   margin-bottom: 0;
+  z-index: 1;
 }
 
 .button {
-  width: 600px;
-  height: 100px;
+  width: 500px;
+  height: 80px;
   padding: 0.5rem;
-  font-size: 3.75rem;
+  font-size: 3rem;
   font-weight: bold;
   background-color: #f3f4f6;
   color: black;
-  border-radius: 0.25rem;
+  border-radius: 0.6rem;
   margin-top: 50px;
 }
 
@@ -65,3 +67,39 @@
   margin: 0;
   padding: 0;
 } 
+
+.userNameBackground {
+  position: relative;
+  top: -40px;
+  left: -5.5px;
+  width: 102.5%;
+  height: 130%;
+  background: url('/frame/username.png') no-repeat center center;
+  background-size: 100% 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.passWordBackground {
+  position: relative;
+  top: -40px;
+  left: -5.5px;
+  width: 102.5%;
+  height: 130%;
+  background: url('/frame/username.png') no-repeat center center;
+  background-size: 100% 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.buttonBackground {
+  position: relative;
+  bottom: 140px;
+  left: 0px;
+  width: 508px;
+  height: 90px;
+  background: url('/frame/start.png') no-repeat center center;
+  background-size: 100% 100%;
+  z-index: 0;
+  pointer-events: none;
+}

@@ -6,32 +6,33 @@ const StartPage: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.titleContainer}>
-          <h1 className={styles.title}>古墳メーカー</h1>
+          <div className={styles.title}>古  墳  メ  ー  カ  ー</div>
         </div>
-        <form className={styles.form}>
-          <div>
+        <div className={styles.form}>
+          <div className={styles.userName}>
             <input
               type="text"
               placeholder="ユーザー名"
               className={styles.input}
             />
+            <div className={styles.userNameBackground} />
           </div>
-          <div className="mt-10">
+          <div className={styles.password}>
             <input
               type="password"
               placeholder="パスワード"
               className={styles.input}
             />
+          <div className={styles.passWordBackground} />
           </div>
-          <div>
-            <button
-              type="submit"
-              className={styles.button}
-            >
-              ゲームスタート
-            </button>
-          </div>
-        </form>
+          <button
+            type="submit"
+            className={styles.button}
+          >
+            ゲームスタート
+          </button>
+          <div className={styles.buttonBackground} />
+        </div>
       </div>
     </div>
   );
