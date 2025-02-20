@@ -3,8 +3,9 @@ import { Part, GameState, GamePart, rotatePart, Position, getPartWidth, getPartH
 
 // 事前定義されたパーツパターン
 const PREDEFINED_PARTS: Part[] = [
+    // Soil (レア度1) パーツ
     {
-        id: 'part1',
+        id: 'soil1',
         grid: [
             [0, 2, 1, 0, 0],
             [0, 1, 1, 0, 0],
@@ -14,10 +15,10 @@ const PREDEFINED_PARTS: Part[] = [
         ],
         rarity: 1,
         points: 100,
-        imageUrl: '/parts/quality/soil.svg'
+        imageUrl: '/parts/quality/soil/soil.svg'
     },
     {
-        id: 'part2',
+        id: 'soil2',
         grid: [
             [0, 2, 1, 2, 0],
             [0, 1, 1, 1, 0],
@@ -27,10 +28,10 @@ const PREDEFINED_PARTS: Part[] = [
         ],
         rarity: 1,
         points: 100,
-        imageUrl: '/parts/quality/soil.svg'
+        imageUrl: '/parts/quality/soil/soil.svg'
     },
     {
-        id: 'part3',
+        id: 'soil3',
         grid: [
             [0, 2, 1, 1, 0],
             [0, 1, 1, 2, 0],
@@ -40,10 +41,10 @@ const PREDEFINED_PARTS: Part[] = [
         ],
         rarity: 1,
         points: 100,
-        imageUrl: '/parts/quality/soil.svg'
+        imageUrl: '/parts/quality/soil/soil.svg'
     },
     {
-        id: 'part4',
+        id: 'soil4',
         grid: [
             [0, 2, 1, 0, 0],
             [0, 1, 1, 2, 0],
@@ -53,7 +54,169 @@ const PREDEFINED_PARTS: Part[] = [
         ],
         rarity: 1,
         points: 100,
-        imageUrl: '/parts/quality/soil.svg'
+        imageUrl: '/parts/quality/soil/soil.svg'
+    },
+
+    // Bronze (レア度2) パーツ
+    {
+        id: 'bronze1',
+        grid: [
+            [0, 2, 1, 0, 0],
+            [0, 1, 1, 0, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 2,
+        points: 200,
+        imageUrl: '/parts/quality/bronze/bronze.svg'
+    },
+    {
+        id: 'bronze2',
+        grid: [
+            [0, 2, 1, 2, 0],
+            [0, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 2,
+        points: 200,
+        imageUrl: '/parts/quality/bronze/bronze.svg'
+    },
+    {
+        id: 'bronze3',
+        grid: [
+            [0, 2, 1, 1, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 2,
+        points: 200,
+        imageUrl: '/parts/quality/bronze/bronze.svg'
+    },
+    {
+        id: 'bronze4',
+        grid: [
+            [0, 2, 1, 0, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 2,
+        points: 200,
+        imageUrl: '/parts/quality/bronze/bronze.svg'
+    },
+
+    // Iron (レア度3) パーツ
+    {
+        id: 'iron1',
+        grid: [
+            [0, 2, 1, 0, 0],
+            [0, 1, 1, 0, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 3,
+        points: 300,
+        imageUrl: '/parts/quality/iron/iron.svg'
+    },
+    {
+        id: 'iron2',
+        grid: [
+            [0, 2, 1, 2, 0],
+            [0, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 3,
+        points: 300,
+        imageUrl: '/parts/quality/iron/iron.svg'
+    },
+    {
+        id: 'iron3',
+        grid: [
+            [0, 2, 1, 1, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 3,
+        points: 300,
+        imageUrl: '/parts/quality/iron/iron.svg'
+    },
+    {
+        id: 'iron4',
+        grid: [
+            [0, 2, 1, 0, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 3,
+        points: 300,
+        imageUrl: '/parts/quality/iron/iron.svg'
+    },
+
+    // Diamond (レア度4) パーツ
+    {
+        id: 'diamond1',
+        grid: [
+            [0, 2, 1, 0, 0],
+            [0, 1, 1, 0, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 4,
+        points: 400,
+        imageUrl: '/parts/quality/diamond/diamond.svg'
+    },
+    {
+        id: 'diamond2',
+        grid: [
+            [0, 2, 1, 2, 0],
+            [0, 1, 1, 1, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 4,
+        points: 400,
+        imageUrl: '/parts/quality/diamond/diamond.svg'
+    },
+    {
+        id: 'diamond3',
+        grid: [
+            [0, 2, 1, 1, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 4,
+        points: 400,
+        imageUrl: '/parts/quality/diamond/diamond.svg'
+    },
+    {
+        id: 'diamond4',
+        grid: [
+            [0, 2, 1, 0, 0],
+            [0, 1, 1, 2, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0]
+        ],
+        rarity: 4,
+        points: 400,
+        imageUrl: '/parts/quality/diamond/diamond.svg'
     }
 ];
 

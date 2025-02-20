@@ -268,4 +268,25 @@ export function updateGridState(
         }
     }
     return newGridState;
+}
+
+// レア度に応じたパーツの画像パスを取得する関数
+export function getPartImagePaths(rarity: Rarity): {
+    base: string;
+    dock: string;
+    dockLast: string;
+} {
+    const qualityMap = {
+        1: 'soil',
+        2: 'bronze',
+        3: 'iron',
+        4: 'diamond'
+    };
+    const quality = qualityMap[rarity];
+    
+    return {
+        base: `/parts/quality/${quality}/${quality}.svg`,
+        dock: `/parts/quality/${quality}/${quality}Dock.svg`,
+        dockLast: `/parts/quality/${quality}/${quality}DockLast.svg`
+    };
 } 

@@ -4,11 +4,7 @@ import { useEffect } from 'react';
 import styles from './GameGrid.module.css'
 import { usePartsStore } from '@/app/store/partsStore';
 import { Position } from '@/app/types/Part';
-
-interface TileProps {
-    isSafe?: boolean
-    // 将来の拡張用にプロパティを追加可能
-}
+import { getPartImagePaths } from '@/app/types/Part';
 
 export default function GameGrid() {
     const { currentPart, currentPosition, placedParts, initializeGame, moveCurrentPart, placePart } = usePartsStore();
@@ -60,13 +56,14 @@ export default function GameGrid() {
                 if (cell === 2) {
                     const isFirstPart = part === placedParts[0];
                     const isDockUsed = part.usedDocks.has(`${relativeCol},${relativeRow}`);
+                    const imagePaths = getPartImagePaths(part.rarity);
                     
                     if (isFirstPart && !isDockUsed && placedParts.length > 1) {
-                        // 最初のパーツの未接続ドックのみsoilDockLast
-                        imageUrl = '/parts/quality/soilDockLast.svg';
+                        // 最初のパーツの未接続ドックのみdockLast
+                        imageUrl = imagePaths.dockLast;
                     } else {
-                        // その他のドックは通常のsoilDock
-                        imageUrl = '/parts/quality/soilDock.svg';
+                        // その他のドックは通常のdock
+                        imageUrl = imagePaths.dock;
                     }
                 }
 
@@ -107,11 +104,14 @@ export default function GameGrid() {
         const cell = currentPart.grid[relativeRow][relativeCol];
         if (cell === 0) return null;
 
+        const imagePaths = getPartImagePaths(currentPart.rarity);
+        const imageUrl = cell === 1 ? currentPart.imageUrl : 
+                        cell === 2 ? imagePaths.dock : '';
+
         return (
             <div className={`${styles.partCell} ${styles.partCellActive}`}>
                 <img 
-                    src={cell === 1 ? currentPart.imageUrl : 
-                         cell === 2 ? '/parts/quality/soilDock.svg' : ''}
+                    src={imageUrl}
                     alt="part" 
                     className={styles.partImage}
                     draggable={false}
