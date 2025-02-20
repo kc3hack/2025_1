@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './styles.module.css';
+import { useRouter } from 'next/navigation';
 
 const MapPage = () => {
   // 初期表示を制御するstate
@@ -70,6 +71,25 @@ const MapPage = () => {
     console.error('画像の読み込みに失敗しました:', (e.target as HTMLDivElement).style.backgroundImage);
   };
 
+  //ルーティング
+  const router = useRouter();
+
+  const goToScoreCollections = () => {
+    router.push('/map/scoreCollections');
+  };
+
+  const goToPartsCollections = () => {
+    router.push('/map/partsCollections');
+  };
+
+  const goToTombsCollections = () => {
+    router.push('/map/tombsCollections');
+  };
+
+  const goToToHome = () => {
+    router.push('/');
+  };
+
   return (
     <div 
       className={styles.container}
@@ -129,17 +149,17 @@ const MapPage = () => {
           }}>
             <div className={styles.buttonFrame}>
               <div className={styles.buttonBackground} />
-              <button className={styles.menuButton}>スコア一覧</button>
+              <button className={styles.menuButton} onClick={goToScoreCollections}>スコア一覧</button>
               <div className={styles.buttonFrameBackground} />
             </div>
             <div className={styles.buttonFrame}>
               <div className={styles.buttonBackground} />
-              <button className={styles.menuButton}>パーツコレクション</button>
+              <button className={styles.menuButton} onClick={goToPartsCollections}>パーツコレクション</button>
               <div className={styles.buttonFrameBackground} />
             </div>
             <div className={styles.buttonFrame}>
               <div className={styles.buttonBackground} />
-              <button className={styles.menuButton}>古墳コレクション</button>
+              <button className={styles.menuButton} onClick={goToTombsCollections}>古墳コレクション</button>
               <div className={styles.buttonFrameBackground} />
             </div>
           </div>
@@ -152,7 +172,7 @@ const MapPage = () => {
             <div className={styles.menuLine} />
             <div className={styles.buttonFrame}>
               <div className={styles.buttonBackground} />
-              <button className={styles.menuButton}>ゲーム終了</button>
+              <button className={styles.menuButton} onClick={goToToHome}>ゲーム終了</button>
               <div className={styles.buttonFrameBackground} />
             </div>
           </div>

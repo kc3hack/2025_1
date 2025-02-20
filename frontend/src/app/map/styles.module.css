@@ -64,14 +64,14 @@
   height: 100%;
   background: url('/frame/button.png') no-repeat center center;
   background-size: 100% 100%;
-  z-index: 3;
+  z-index: 1;
   pointer-events: none;
 }
 
 .buttonFrame {
   width: 250px;
   height: 60px;
-  margin: 0px 0;
+  margin: 0px;
   position: relative;
 }
 
@@ -98,7 +98,7 @@
   justify-content: flex-start;
   border-radius: 5px;
   position: relative;
-  z-index: 1;
+  z-index: 1.5;
 }
 
 .menuTitle {
@@ -109,7 +109,7 @@
 
 .menuButton {
   width: 100%;
-  height: 100%;
+  height: 88%;
   padding: 0;
   padding-bottom: 10px;
   border: none;
@@ -117,7 +117,7 @@
   font-size: 22px;
   text-align: center;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   background: transparent;
   position: relative;
