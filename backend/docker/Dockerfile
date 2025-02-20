@@ -9,6 +9,7 @@ ADD ../package.json ../bun.lock ./
 RUN bun install
 RUN bun add -d bun-types
 RUN bun update hono
+RUN bun add -d typescript
 
 # アプリコードをコピー
 COPY . .
@@ -16,11 +17,11 @@ COPY . .
 # Install default-mysql-client
 RUN apt-get update && apt-get install -y default-mysql-client
 
-# Node.js のインストール（必要なら）
-RUN apt-get update && apt-get install -y nodejs
+# Node.js と npm のインストール
+RUN apt-get update && apt-get install -y nodejs npm
 
 # アプリをビルド（必要なら）
-RUN bun run build
+RUN npm install -g typescript
 
 # アプリを実行
 CMD ["bun", "run", "dev"]
