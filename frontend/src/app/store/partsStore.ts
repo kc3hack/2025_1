@@ -244,16 +244,14 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
     gridState: createEmptyGridState(),
 
     initializeGame: () => {
-        const selectedParts: GamePart[] = [];
-        for (let i = 0; i < 10; i++) {
-            const randomPart = PREDEFINED_PARTS[Math.floor(Math.random() * PREDEFINED_PARTS.length)];
-            selectedParts.push({
-                ...randomPart,
-                position: null,
-                isPlaced: false,
-                usedDocks: new Set()
-            });
-        }
+        // 重複のない10個のパーツを選択
+        const uniqueParts = getRandomUniqueParts(10);
+        const selectedParts: GamePart[] = uniqueParts.map(part => ({
+            ...part,
+            position: null,
+            isPlaced: false,
+            usedDocks: new Set()
+        }));
 
         set({
             availableParts: selectedParts,
@@ -335,7 +333,7 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
         set(state => ({
             ...state,
             placedParts: [...placedParts, newPart],
-            currentPart: state.availableParts[0] || null,
+            currentPart: state.availableParts[1] || null,
             availableParts: state.availableParts.slice(1),
             currentPosition: {
                 safeTile: { x: 10, y: 2 },
@@ -434,4 +432,10 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             return { ...state, currentPosition: newPos };
         });
     }
-})); 
+}));
+
+// パーツの重複を避けるためのヘルパー関数
+function getRandomUniqueParts(count: number): Part[] {
+    const shuffled = [...PREDEFINED_PARTS].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
+} 
