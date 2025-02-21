@@ -3,17 +3,23 @@
 import { useState } from 'react';
 import styles from './NextTurnButton.module.css';
 
-const NextTurnButton = () => {
+interface NextTurnButtonProps {
+  onProcessingChange: (isProcessing: boolean) => void;
+}
+
+const NextTurnButton = ({ onProcessingChange }: NextTurnButtonProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleClick = () => {
-    setIsProcessing(true);
-    console.log('ボタンがクリックされました');
+    const newProcessingState = true;
+    setIsProcessing(newProcessingState);
+    onProcessingChange(newProcessingState);  // 親コンポーネントに通知
   };
 
   const handleCancel = () => {
-    setIsProcessing(false);
-    console.log('キャンセルされました');
+    const newProcessingState = false;
+    setIsProcessing(newProcessingState);
+    onProcessingChange(newProcessingState);  // 親コンポーネントに通知
   };
 
   return (

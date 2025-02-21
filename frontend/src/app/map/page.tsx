@@ -12,19 +12,15 @@ import DraggableMap from '../components/mapOption/DraggableMap';
 import NextTurnButton from '../components/button/NextTurnButton';
 
 const MapPage = () => {
-  // 初期表示を制御するstate
-  const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState({ x: 800, y: -900 });
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [scale, setScale] = useState(10);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
 
-  const [scale, setScale] = useState(10);
-
   useEffect(() => {
-    setPosition({ 
-      x: window.innerWidth / 1.5, 
-      y: -900 
-    });
+    setPosition({ x: window.innerWidth / 1.5, y: -900 });
     setIsLoaded(true);
 
     const handleResize = () => {
@@ -38,50 +34,20 @@ const MapPage = () => {
     };
   }, [setShowCompletionModal]);
 
-  const [dragging, setDragging] = useState(false);
-  const [rel, setRel] = useState({ x: 0, y: 0 });
-  const japanImageRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button !== 0) return; // 左クリックのみ
-    const pos = { x: e.pageX - position.x, y: e.pageY - position.y };
-    setRel(pos);
-    setDragging(true);
-    e.stopPropagation();
-    e.preventDefault();
-  };
-
-  const handleMouseUp = () => {
-    setDragging(false);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!dragging) return;
-    setPosition({ x: e.pageX - rel.x, y: e.pageY - rel.y });
-    e.stopPropagation();
-    e.preventDefault();
-  };
-
-  // デバッグ用のエラーハンドリングを追加
   const handleImageError = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
     console.error('画像の読み込みに失敗しました:', (e.target as HTMLDivElement).style.backgroundImage);
   };
 
   return (
-    <div 
-      className={styles.container}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-    >
-      <DraggableMap
+    <div className={styles.container}>
+      <RegionMasks 
+        onError={handleImageError}
+        isProcessing={isProcessing}
         position={position}
         scale={scale}
         isLoaded={isLoaded}
-        dragging={dragging}
-        onMouseDown={handleMouseDown}
-      >
-        <RegionMasks onError={handleImageError} />
-      </DraggableMap>
+        onPositionChange={setPosition}
+      />
 
       <Menu />
 
@@ -92,7 +58,9 @@ const MapPage = () => {
         initialScale={10}
       />
 
-      <NextTurnButton />
+      <NextTurnButton 
+        onProcessingChange={setIsProcessing}
+      />
 
       {showCompletionModal && (
         <div className={styles.modalOverlay}>
