@@ -11,15 +11,17 @@ const NextTurnButton = ({ onProcessingChange }: NextTurnButtonProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleClick = () => {
-    const newProcessingState = true;
-    setIsProcessing(newProcessingState);
-    onProcessingChange(newProcessingState);  // 親コンポーネントに通知
-  };
-
-  const handleCancel = () => {
-    const newProcessingState = false;
-    setIsProcessing(newProcessingState);
-    onProcessingChange(newProcessingState);  // 親コンポーネントに通知
+    if (!isProcessing) {
+      // 通常状態からProcessingへ
+      setIsProcessing(true);
+      onProcessingChange(true);
+    } else {
+      // キャンセル処理
+      setIsProcessing(false);
+      onProcessingChange(false);
+      // 画面をリロード
+      window.location.reload();
+    }
   };
 
   return (
@@ -32,21 +34,11 @@ const NextTurnButton = ({ onProcessingChange }: NextTurnButtonProps) => {
           </>
         ) : (
           <>
-            <div className={styles.nextButtonTitle}>作成スタート</div>
+            <div className={styles.nextButtonTitle}>キャンセル</div>
           </>
         )}
       </div>
       <div className={styles.nextButtonBackground} />
-      {isProcessing && (
-        <button 
-          className={styles.cancelButton}
-          onClick={handleCancel}
-        >
-          <div className={styles.cancelButtonInner} />
-          <div className={styles.cancelButtonBackground} />
-          <span className={styles.cancelButtonText}>キャンセル</span>
-        </button>
-      )}
     </div>
   );
 };

@@ -56,7 +56,7 @@ const Menu = () => {
         }}>
           <div className={styles.menuLine} />
           <div className={styles.buttonFrame}>
-            <div className={styles.buttonBackground} />
+            <div className={`${styles.buttonBackground} ${styles.exitButton}`} />
             <button className={styles.menuButton} onClick={goToToHome}>ゲーム終了</button>
             <div className={styles.buttonFrameBackground} />
           </div>

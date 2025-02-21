@@ -10,6 +10,8 @@ interface BaseMapProps {
   scale: number;
   isLoaded: boolean;
   onPositionChange: (position: { x: number; y: number }) => void;
+  onMarkingComplete: (marking: { x: number; y: number }) => void;
+  onMarkingReset?: () => void;
 }
 
 const RegionMasks = ({ 
@@ -18,7 +20,9 @@ const RegionMasks = ({
   position,
   scale,
   isLoaded,
-  onPositionChange
+  onPositionChange,
+  onMarkingComplete,
+  onMarkingReset
 }: BaseMapProps) => {
   const [showMaskedKansai, setShowMaskedKansai] = useState(false);
   const [showMaskedKanto, setShowMaskedKanto] = useState(true);
@@ -32,6 +36,7 @@ const RegionMasks = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const [markings, setMarkings] = useState<{ x: number; y: number; timestamp: string }[]>([]);
+  const markingResetRef = useRef<() => void | undefined>(undefined);
 
   useEffect(() => {
     const img = new Image();
@@ -149,12 +154,9 @@ const RegionMasks = ({
     };
     setMarkings(prev => [...prev, newMarking]);
     drawMarking(ctx, x, y);
-    console.log('マーキング追加:', {
-      position: { x: Math.round(x), y: Math.round(y) },
-      scale: scaleRatio,
-      markingNumber: markings.length + 1,
-      timestamp: new Date().toLocaleTimeString()
-    });
+    
+    // マーキング完了を通知
+    onMarkingComplete({ x, y });
   };
 
   const checkMaskAtPosition = async (x: number, y: number): Promise<boolean> => {
@@ -211,6 +213,46 @@ const RegionMasks = ({
     ctx.fillStyle = 'red';
     ctx.fill();
   };
+
+  // キャンバスを再描画する関数
+  const redrawCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return;
+
+    // マーキングをリセット
+    setMarkings([]);
+
+    // キャンバスをクリア
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // ベース地図を再描画
+    const img = imageRef.current;
+    if (!img) return;
+    
+    canvas.width = img.width * 2;
+    canvas.height = img.height * 2;
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    
+    // マスクを再描画
+    drawMasks();
+  };
+
+  // キャンセル時の再描画をuseEffectで監視
+  useEffect(() => {
+    if (!isProcessing) {
+      redrawCanvas();
+    }
+  }, [isProcessing]);
+
+  // useEffectでonMarkingResetを監視
+  useEffect(() => {
+    if (onMarkingReset) {
+      markingResetRef.current = redrawCanvas;
+    }
+  }, []);
 
   return (
     <div 

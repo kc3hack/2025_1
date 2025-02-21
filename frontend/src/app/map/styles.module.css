@@ -70,23 +70,108 @@
 }
 
 .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
-.modal {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
+.modalContainer {
+  position: relative;
+  width: 800px;
+  height: 300px;
+  margin-top: 400px;
+}
+
+.modalFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/frame/modal.png') no-repeat center center;
+  background-size: contain;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.modalContent {
+  position: relative;
+  top: 3px;
+  left: 1px;
+  width: 69%;
+  height: 81%;
+  margin: auto;
+  background-color: #E5FFB6;
+  border-radius: 8px;
+  padding: 20px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.modalContent h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.buttonContainer {
+  position: relative;
+  width: 250px;
+  height: 60px;
+}
+
+.buttonFrame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/frame/button.png') no-repeat center center;
+  background-size: contain;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.confirmButton, .cancelButton {
+  position: relative;
+  width: 95%;
+  height: 80%;
+  margin: auto;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 24px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirmButton {
+  top: 2px;
+  background-color: #FBC9FF;
+}
+
+.cancelButton {
+  top: 2px;
+  background-color: #FFFFFF;
 }
 
 .closeButton {
