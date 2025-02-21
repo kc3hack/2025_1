@@ -9,12 +9,22 @@ services:
       MYSQL_DATABASE: mydb
       MYSQL_USER: myuser
       MYSQL_PASSWORD: mypassword
+      TZ: Asia/Tokyo
     volumes:
-      #- ./docker/mysql:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+      - ./docker/mysql/logs:/var/log/mysql
+      - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
     ports:
       - "3306:3306"
+    platform: linux/arm64/v8
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   backend:
     build: 
@@ -24,11 +34,18 @@ services:
     restart: always
     environment:
       - NODE_ENV=development
-        DATABASE_URL:"mysql://root:rootpassword@localhost:3306/mydb"
+      - DATABASE_URL=mysql://root:rootpassword@mysql:3306/mydb
+      - TZ=Asia/Tokyo
     ports:
       - "3001:3001"
     depends_on:
-      - mysql
-    command: ["./docker/wait-for-it.sh", "mysql:3306", "--", "bun", "run", "dev"]
+      mysql:
+        condition: service_healthy
+    command: ["sh", "-c", "while ! nc -z mysql 3306; do sleep 1; done; bun run dev"]
     tty: true
     stdin_open: true
+    platform: linux/arm64/v8
+
+volumes:
+  mysql_data:
+  mysqld:

@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-# wait-for-it.sh
+#!/bin/sh
 
 set -e
 
@@ -7,10 +6,10 @@ host="$1"
 shift
 cmd="$@"
 
-until mysqladmin ping -h "$host" --silent; do
-  >&2 echo "MySQL is unavailable - sleeping"
-  sleep 1
+until nc -z -v -w30 mysql 3306; do
+  echo "Waiting for MySQL to be ready..."
+  sleep 5
 done
 
->&2 echo "MySQL is up - executing command"
+echo "MySQL is up - executing command"
 exec $cmd
