@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "bun run src/server.ts"
+    "dev": "bun run --hot src/server.ts"
   },
   "compilerOptions": {
     "types": ["bun-types"]
