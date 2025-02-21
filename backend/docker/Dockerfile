@@ -14,8 +14,12 @@ RUN bun add -d typescript
 # アプリコードをコピー
 COPY . .
 
-# Install default-mysql-client
-RUN apt-get update && apt-get install -y default-mysql-client
+# MySQLクライアントとnetcatをインストール
+RUN apt-get update && apt-get install -y \
+    default-mysql-client \
+    netcat-traditional \
+    nodejs \
+    npm
 
 # Node.js と npm のインストール
 RUN apt-get update && apt-get install -y nodejs npm
@@ -25,3 +29,5 @@ RUN npm install -g typescript
 
 # アプリを実行
 CMD ["bun", "run", "dev"]
+
+EXPOSE 3001
