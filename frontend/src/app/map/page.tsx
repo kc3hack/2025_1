@@ -12,7 +12,7 @@ import DraggableMap from '../components/mapOption/DraggableMap';
 import NextTurnButton from '../components/button/NextTurnButton';
 
 const MapPage = () => {
-  const [position, setPosition] = useState({ x: 800, y: -900 });
+  const [position, setPosition] = useState({ x: 150, y: -600 });
   const [isLoaded, setIsLoaded] = useState(false);
   const [scale, setScale] = useState(10);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -20,11 +20,11 @@ const MapPage = () => {
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
 
   useEffect(() => {
-    setPosition({ x: window.innerWidth / 1.5, y: -900 });
+    setPosition({ x: window.innerWidth / 5, y: -600 });
     setIsLoaded(true);
 
     const handleResize = () => {
-      setPosition({ x: window.innerWidth / 1.5, y: -900 });
+      setPosition({ x: window.innerWidth / 5, y: -600 });
     };
 
     window.addEventListener('resize', handleResize);
