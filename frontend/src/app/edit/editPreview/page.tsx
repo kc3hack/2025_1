@@ -7,6 +7,8 @@ import NextButton from '../../components/edit/NextButton'
 import { usePartsStore } from '@/app/store/partsStore'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { calculateGridBoundary } from '@/app/types/GridBoundary'
+import { useModalStore } from '@/app/store/modalStore'
 
 export default function EditPreviewPage() {
     const { isCompleted, completedGridState } = usePartsStore();
@@ -18,6 +20,14 @@ export default function EditPreviewPage() {
         }
     }, [isCompleted, completedGridState, router]);
 
+    const handleComplete = async () => {
+        if (!completedGridState) return;
+        
+        // モーダル表示フラグを設定してから遷移
+        useModalStore.getState().setShowCompletionModal(true);
+        router.push('/map');
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.gridWrapper}>
@@ -25,7 +35,12 @@ export default function EditPreviewPage() {
             </div>
             <ScorePanel />
             <div className={styles.buttonGroup}>
-                <NextButton type="place" position="center" text="完成" />
+                <NextButton 
+                    type="place" 
+                    position="center" 
+                    text="完成" 
+                    onClick={handleComplete}
+                />
             </div>
         </div>
     )

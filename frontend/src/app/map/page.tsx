@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './styles.module.css';
 import { useRouter } from 'next/navigation';
+import { useModalStore } from '@/app/store/modalStore';
 
 const MapPage = () => {
   // 初期表示を制御するstate
@@ -10,6 +11,8 @@ const MapPage = () => {
   const [position, setPosition] = useState({ x: 800, y: -900 });
   const [scale, setScale] = useState(10);
   
+  const { showCompletionModal, setShowCompletionModal } = useModalStore();
+
   useEffect(() => {
     setPosition({ 
       x: window.innerWidth / 1.5, 
@@ -22,8 +25,11 @@ const MapPage = () => {
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      setShowCompletionModal(false);
+    };
+  }, [setShowCompletionModal]);
 
   const [dragging, setDragging] = useState(false);
   const [rel, setRel] = useState({ x: 0, y: 0 });
@@ -241,6 +247,21 @@ const MapPage = () => {
         </div>
         <div className={styles.nextButtonBackground} />
       </div>
+
+      {showCompletionModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <h2>パーツ完成！</h2>
+            <p>新しいパーツが追加されました</p>
+            <button 
+              onClick={() => setShowCompletionModal(false)}
+              className={styles.closeButton}
+            >
+              閉じる
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

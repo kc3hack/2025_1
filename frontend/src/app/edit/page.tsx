@@ -21,6 +21,25 @@ export default function EditPage() {
         }
     }, [shouldNavigateToPreview, router]);
 
+    // 開発者用のデバッグコマンド
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Command + Shift + D で即完成（mac用）
+            if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'D') {
+                usePartsStore.setState(state => ({
+                    ...state,
+                    isCompleted: true,
+                    shouldNavigateToPreview: true,
+                    completedGridState: state.gridState
+                }));
+                router.push('/edit/editPreview');
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [router]);
+
     const handleComplete = () => {
         router.push('/edit/editPreview');
     };
