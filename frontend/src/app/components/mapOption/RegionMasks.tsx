@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import styles from './RegionMasks.module.css';
 
-export const useRegionMasks = () => {
+interface BaseMapProps {
+  onError?: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
+}
+
+const RegionMasks = ({ onError }: BaseMapProps) => {
   const [showMaskedKansai, setShowMaskedKansai] = useState(false);
   const [showMaskedKanto, setShowMaskedKanto] = useState(true);
   const [showMaskedKyushu, setShowMaskedKyushu] = useState(true);
@@ -12,45 +16,13 @@ export const useRegionMasks = () => {
   const [showMaskedChugoku, setShowMaskedChugoku] = useState(true);
   const [showMaskedShikoku, setShowMaskedShikoku] = useState(true);
 
-  return {
-    showMaskedKansai,
-    showMaskedKanto,
-    showMaskedKyushu,
-    showMaskedTohoku,
-    showMaskedChubu,
-    showMaskedChugoku,
-    showMaskedShikoku,
-    setShowMaskedKansai,
-    setShowMaskedKanto,
-    setShowMaskedKyushu,
-    setShowMaskedTohoku,
-    setShowMaskedChubu,
-    setShowMaskedChugoku,
-    setShowMaskedShikoku,
-  };
-};
-
-interface RegionMasksProps {
-  showMaskedKansai: boolean;
-  showMaskedKanto: boolean;
-  showMaskedKyushu: boolean;
-  showMaskedTohoku: boolean;
-  showMaskedChubu: boolean;
-  showMaskedChugoku: boolean;
-  showMaskedShikoku: boolean;
-}
-
-const RegionMasks: React.FC<RegionMasksProps> = ({
-  showMaskedKansai,
-  showMaskedKanto,
-  showMaskedKyushu,
-  showMaskedTohoku,
-  showMaskedChubu,
-  showMaskedChugoku,
-  showMaskedShikoku,
-}) => {
   return (
     <>
+      <div 
+        className={styles.mapImage}
+        style={{ backgroundImage: 'url(/japan/defaultJapan.png)' }}
+        onError={onError}
+      />
       {showMaskedKansai && (
         <div className={styles.mapImage} style={{ backgroundImage: 'url(/japan/mask/maskedKansai.png)' }} />
       )}

@@ -7,8 +7,9 @@ import { useModalStore } from '@/app/store/modalStore';
 import Menu from '../components/menu/ListMenu';
 import DominationMenu from '../components/menu/DominationMenu';
 import ZoomControls from '../components/menu/ZoomControls';
-import RegionMasks, { useRegionMasks } from '../components/mapOption/RegionMasks';
-import mapStyles from '../components/mapOption/RegionMasks.module.css';
+import RegionMasks from '../components/mapOption/RegionMasks';
+import DraggableMap from '../components/mapOption/DraggableMap';
+import NextTurnButton from '../components/button/NextTurnButton';
 
 const MapPage = () => {
   // 初期表示を制御するstate
@@ -16,7 +17,6 @@ const MapPage = () => {
   const [position, setPosition] = useState({ x: 800, y: -900 });
   
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
-  const regionMasks = useRegionMasks();
 
   const [scale, setScale] = useState(10);
 
@@ -73,45 +73,26 @@ const MapPage = () => {
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      <div
-        ref={japanImageRef}
-        className={`${styles.japanMap} ${dragging ? styles.dragging : ''}`}
-        style={{
-          top: `${position.y}px`,
-          left: `${position.x}px`,
-          transform: `scale(${scale})`,
-          opacity: isLoaded ? 1 : 0,
-        }}
+      <DraggableMap
+        position={position}
+        scale={scale}
+        isLoaded={isLoaded}
+        dragging={dragging}
         onMouseDown={handleMouseDown}
       >
-        <div 
-          className={mapStyles.mapImage}
-          style={{ backgroundImage: 'url(/japan/defaultJapan.png)' }}
-          onError={handleImageError}
-        />
-        <RegionMasks {...regionMasks} />
-      </div>
+        <RegionMasks onError={handleImageError} />
+      </DraggableMap>
 
-      {/* メニューコンポーネントを使用 */}
       <Menu />
 
-      {/* 統治度表示コンポーネント */}
       <DominationMenu />
 
-      {/* 拡大縮小コントロール */}
       <ZoomControls 
         onScaleChange={setScale}
         initialScale={10}
       />
 
-      {/* 右下の原寸画像とその背景 */}
-      <div className={styles.nextButton}>
-        <div className={styles.nextButtonInner}>
-          <div className={styles.nextButtonTitle}>勢力を拡大する</div>
-          <div>ランダム数: 10</div>
-        </div>
-        <div className={styles.nextButtonBackground} />
-      </div>
+      <NextTurnButton />
 
       {showCompletionModal && (
         <div className={styles.modalOverlay}>
