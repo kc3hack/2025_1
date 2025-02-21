@@ -2,18 +2,26 @@
 
 import ScorePanel from '../../components/edit/ScorePanel'
 import styles from './styles.module.css'
-import { useState } from 'react'
 import GameGrid from '../../components/edit/GameGrid'
-import { usePartsStore } from '@/app/store/partsStore'
 import NextButton from '../../components/edit/NextButton'
+import { usePartsStore } from '@/app/store/partsStore'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function EditPreviewPage() {
-    const { rotatePart, placePart } = usePartsStore();
+    const { isCompleted, completedGridState } = usePartsStore();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isCompleted || !completedGridState) {
+            router.push('/edit');
+        }
+    }, [isCompleted, completedGridState, router]);
 
     return (
         <div className={styles.container}>
             <div className={styles.gridWrapper}>
-                <GameGrid />
+                <GameGrid readOnly gridState={completedGridState} />
             </div>
             <ScorePanel />
             <div className={styles.buttonGroup}>

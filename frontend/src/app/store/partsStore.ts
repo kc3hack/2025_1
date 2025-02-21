@@ -254,6 +254,9 @@ interface PartsStore extends GameState {
     isSafeTileMode: boolean; // safeTileモードかどうかのフラグ
     gridState: GridState;
     isGameOver: boolean;  // ゲーム終了フラグを追加
+    isCompleted: boolean;
+    shouldNavigateToPreview: boolean; // 追加
+    completedGridState: GridState | null;  // 追加
 }
 
 export const usePartsStore = create<PartsStore>((set, get) => ({
@@ -268,6 +271,9 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
     isSafeTileMode: true, // 初期状態はsafeTileモード
     gridState: createEmptyGridState(),
     isGameOver: false,  // 初期状態を追加
+    isCompleted: false,
+    shouldNavigateToPreview: false,
+    completedGridState: null,  // 追加
 
     initializeGame: () => {
         // 重複のない10個のパーツを選択
@@ -400,7 +406,10 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             },
             score: state.score + currentPart.points,
             gridState: newGridState,
-            isGameOver: isAllConnected  // 全て接続されていたらゲーム終了
+            isGameOver: isAllConnected,
+            isCompleted: isAllConnected,
+            shouldNavigateToPreview: isAllConnected,
+            completedGridState: isAllConnected ? newGridState : null  // 完成時のgridを保存
         }));
 
         return true;
