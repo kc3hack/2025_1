@@ -57,6 +57,7 @@
   color: black;
   border-radius: 0.6rem;
   margin-top: 50px;
+  cursor: pointer;
 }
 
 .button:hover {

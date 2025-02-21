@@ -59,6 +59,7 @@
   background-color: #f3f4f6;
   color: black;
   border-radius: 0.25rem;
+  cursor: pointer;
 }
 
 .backButton:hover {
@@ -66,13 +67,12 @@
 } 
 
 .backButtonFrame {
-  position: relative;
+  position: absolute;
   bottom: 32px;
   left: 20px;
   width: 9rem;
-  height: 5rem;
+  height: 4.6rem;
   background: url('/frame/start.png') no-repeat center center;
   background-size: 100% 100%;
-  z-index: 0;
   pointer-events: none;
 }
