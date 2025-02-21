@@ -6,6 +6,11 @@
     z-index: 1;
 }
 
+/* readOnly時のグリッドスタイル */
+.readOnlyGrid {
+    border: none;
+}
+
 .row {
     display: flex;
 }
@@ -60,4 +65,13 @@
     object-fit: cover;
     pointer-events: none;
     z-index: 3;
+}
+
+.readOnlyTile {
+    border: none;
+    background: none;
+}
+
+.readOnlyTile::before {
+    display: none;
 } 

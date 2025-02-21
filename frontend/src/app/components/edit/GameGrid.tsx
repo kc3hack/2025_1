@@ -140,14 +140,16 @@ export default function GameGrid({ readOnly, gridState }: GameGridProps) {
                 {Array(cols).fill(0).map((_, col) => (
                     <div 
                         key={`tile-${row}-${col}`} 
-                        className={styles.tile}
+                        className={`${styles.tile} ${readOnly ? styles.readOnlyTile : ''}`}
                     >
-                        <img 
-                            src={isSafe ? '/parts/safeTile.png' : '/parts/tile.png'} 
-                            alt="tile" 
-                            className={styles.tileImage}
-                            draggable={false}
-                        />
+                        {!readOnly && (
+                            <img 
+                                src={isSafe ? '/parts/safeTile.png' : '/parts/tile.png'} 
+                                alt="tile" 
+                                className={styles.tileImage}
+                                draggable={false}
+                            />
+                        )}
                         {renderPlacedParts(row, col)}
                         {renderCurrentPart(row, col, isSafe)}
                     </div>
@@ -157,7 +159,7 @@ export default function GameGrid({ readOnly, gridState }: GameGridProps) {
     };
 
     return (
-        <div className={styles.grid}>
+        <div className={`${styles.grid} ${readOnly ? styles.readOnlyGrid : ''}`}>
             {renderTiles(5, 25, true)}   {/* セーフエリア */}
             {renderTiles(25, 25, false)} {/* 通常エリア */}
         </div>
