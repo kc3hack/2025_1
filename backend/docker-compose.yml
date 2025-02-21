@@ -35,13 +35,15 @@ services:
     environment:
       - NODE_ENV=development
       - DATABASE_URL=mysql://root:rootpassword@mysql:3306/mydb
+      - PORT=3001
+      - HOST=0.0.0.0
       - TZ=Asia/Tokyo
     ports:
       - "3001:3001"
     depends_on:
       mysql:
         condition: service_healthy
-    command: ["sh", "-c", "while ! nc -z mysql 3306; do sleep 1; done; bun run dev"]
+    command: ["sh", "-c", "while ! nc -z mysql 3306; do sleep 1; done; bun run --hot src/server.ts"]
     tty: true
     stdin_open: true
     platform: linux/arm64/v8
