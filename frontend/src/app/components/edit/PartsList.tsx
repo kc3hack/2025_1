@@ -59,6 +59,9 @@ export default function PartsList({ onClose }: PartsListProps) {
                                             </div>
                                         ))}
                                     </div>
+                                    {index < availableParts.length - 1 && (index + 1) % 3 !== 0 && (
+                                        <div className={styles.arrow}>→</div>
+                                    )}
                                 </div>
                             ))}
                         </div>
