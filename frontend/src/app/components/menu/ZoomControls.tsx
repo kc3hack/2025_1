@@ -10,13 +10,13 @@ const ZoomControls = ({ onScaleChange, initialScale = 10 }: ZoomControlsProps) =
   const [scale, setScale] = useState(initialScale);
 
   const handleZoomIn = () => {
-    const newScale = Math.min(scale * 1.2, 15);
+    const newScale = Math.min(scale * 1.2, 40);
     setScale(newScale);
     onScaleChange(newScale);
   };
 
   const handleZoomOut = () => {
-    const newScale = Math.max(scale / 1.2, 0.5);
+    const newScale = Math.max(scale / 1.2, 5);
     setScale(newScale);
     onScaleChange(newScale);
   };

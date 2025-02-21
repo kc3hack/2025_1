@@ -12,19 +12,19 @@ import DraggableMap from '../components/mapOption/DraggableMap';
 import NextTurnButton from '../components/button/NextTurnButton';
 
 const MapPage = () => {
-  const [position, setPosition] = useState({ x: 150, y: -600 });
+  const [position, setPosition] = useState({ x: -200, y: -2400 });
   const [isLoaded, setIsLoaded] = useState(false);
-  const [scale, setScale] = useState(10);
+  const [scale, setScale] = useState(20);
   const [isProcessing, setIsProcessing] = useState(false);
   
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
 
   useEffect(() => {
-    setPosition({ x: window.innerWidth / 5, y: -600 });
+    setPosition({ x: (window.innerWidth / 12) - 200, y: -2400 });
     setIsLoaded(true);
 
     const handleResize = () => {
-      setPosition({ x: window.innerWidth / 5, y: -600 });
+      setPosition({ x: (window.innerWidth / 12) - 200, y: -2400 });
     };
 
     window.addEventListener('resize', handleResize);
@@ -55,7 +55,7 @@ const MapPage = () => {
 
       <ZoomControls 
         onScaleChange={setScale}
-        initialScale={10}
+        initialScale={20}
       />
 
       <NextTurnButton 

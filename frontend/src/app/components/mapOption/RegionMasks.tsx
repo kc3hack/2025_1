@@ -55,9 +55,12 @@ const RegionMasks = ({
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
-    canvas.width = img.width;
-    canvas.height = img.height;
-    ctx.drawImage(img, 0, 0);
+    // キャンバスサイズを2倍に拡大
+    canvas.width = img.width * 2;
+    canvas.height = img.height * 2;
+    
+    // 画像を拡大して描画
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
   };
 
   const drawMasks = () => {
@@ -71,6 +74,7 @@ const RegionMasks = ({
       const maskImg = new Image();
       maskImg.src = `/japan/mask/masked${maskName}.png`;
       maskImg.onload = () => {
+        // マスクも同じサイズで描画
         ctx.drawImage(maskImg, 0, 0, canvas.width, canvas.height);
       };
     };
@@ -183,11 +187,20 @@ const RegionMasks = ({
 
     return new Promise<boolean>((resolve) => {
       img.onload = () => {
-        tempCanvas.width = img.width;
-        tempCanvas.height = img.height;
-        tempCtx.drawImage(img, 0, 0);
+        // キャンバスサイズを現在のcanvasと同じに設定
+        const canvas = canvasRef.current;
+        if (!canvas) {
+          resolve(false);
+          return;
+        }
+        
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        
+        // マスク画像を同じスケールで描画
+        tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
         const pixel = tempCtx.getImageData(x, y, 1, 1).data;
-        resolve(pixel[3] > 0);
+        resolve(pixel[3] > 0); // アルファ値が0より大きければマスク領域
       };
     });
   };
