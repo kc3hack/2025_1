@@ -7,14 +7,18 @@ import { useModalStore } from '@/app/store/modalStore';
 import Menu from '../components/menu/ListMenu';
 import DominationMenu from '../components/menu/DominationMenu';
 import ZoomControls from '../components/menu/ZoomControls';
+import RegionMasks, { useRegionMasks } from '../components/mapOption/RegionMasks';
+import mapStyles from '../components/mapOption/RegionMasks.module.css';
 
 const MapPage = () => {
   // 初期表示を制御するstate
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState({ x: 800, y: -900 });
-  const [scale, setScale] = useState(10);
   
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
+  const regionMasks = useRegionMasks();
+
+  const [scale, setScale] = useState(10);
 
   useEffect(() => {
     setPosition({ 
@@ -37,23 +41,6 @@ const MapPage = () => {
   const [dragging, setDragging] = useState(false);
   const [rel, setRel] = useState({ x: 0, y: 0 });
   const japanImageRef = useRef<HTMLDivElement>(null);
-
-  // 各地域の表示状態を管理する変数
-  const [showMaskedKansai, setShowMaskedKansai] = useState(false);
-  const [showMaskedKanto, setShowMaskedKanto] = useState(true);
-  const [showMaskedKyushu, setShowMaskedKyushu] = useState(true);
-  const [showMaskedTohoku, setShowMaskedTohoku] = useState(true);
-  const [showMaskedChubu, setShowMaskedChubu] = useState(true);
-  const [showMaskedChugoku, setShowMaskedChugoku] = useState(true);
-  const [showMaskedShikoku, setShowMaskedShikoku] = useState(true);
-
-  const handleZoomIn = () => {
-    setScale(prevScale => Math.min(prevScale * 1.2, 15)); // 拡大度合いを細かくし、最大値を15に設定
-  };
-
-  const handleZoomOut = () => {
-    setScale(prevScale => Math.max(prevScale / 1.2, 0.5)); // 縮小度合いを細かくし、最小値を0.5に設定
-  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return; // 左クリックのみ
@@ -98,31 +85,11 @@ const MapPage = () => {
         onMouseDown={handleMouseDown}
       >
         <div 
-          className={styles.mapImage}
+          className={mapStyles.mapImage}
           style={{ backgroundImage: 'url(/japan/defaultJapan.png)' }}
           onError={handleImageError}
         />
-        {showMaskedKansai && (
-          <div className={styles.mapImage} style={{ backgroundImage: 'url(/japan/mask/maskedKansai.png)' }} />
-        )}
-        {showMaskedKanto && (
-          <div className={styles.mapImage} style={{ backgroundImage: 'url(/japan/mask/maskedKanto.png)' }} />
-        )}
-        {showMaskedKyushu && (
-          <div className={styles.mapImage} style={{ backgroundImage: 'url(/japan/mask/maskedKyushu.png)' }} />
-        )}
-        {showMaskedTohoku && (
-          <div className={styles.mapImage} style={{ backgroundImage: 'url(/japan/mask/maskedTohoku.png)' }} />
-        )}
-        {showMaskedChubu && (
-          <div className={styles.mapImage} style={{ backgroundImage: 'url(/japan/mask/maskedChubu.png)' }} />
-        )}
-        {showMaskedChugoku && (
-          <div className={styles.mapImage} style={{ backgroundImage: 'url(/japan/mask/maskedChugoku.png)' }} />
-        )}
-        {showMaskedShikoku && (
-          <div className={styles.mapImage} style={{ backgroundImage: 'url(/japan/mask/maskedShikoku.png)' }} />
-        )}
+        <RegionMasks {...regionMasks} />
       </div>
 
       {/* メニューコンポーネントを使用 */}
@@ -133,8 +100,8 @@ const MapPage = () => {
 
       {/* 拡大縮小コントロール */}
       <ZoomControls 
-        onZoomIn={handleZoomIn}
-        onZoomOut={handleZoomOut}
+        onScaleChange={setScale}
+        initialScale={10}
       />
 
       {/* 右下の原寸画像とその背景 */}
