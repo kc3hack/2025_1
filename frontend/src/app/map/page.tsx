@@ -4,6 +4,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import styles from './styles.module.css';
 import { useRouter } from 'next/navigation';
 import { useModalStore } from '@/app/store/modalStore';
+import Menu from '../components/menu/ListMenu';
+import DominationMenu from '../components/menu/DominationMenu';
+import ZoomControls from '../components/menu/ZoomControls';
 
 const MapPage = () => {
   // 初期表示を制御するstate
@@ -77,25 +80,6 @@ const MapPage = () => {
     console.error('画像の読み込みに失敗しました:', (e.target as HTMLDivElement).style.backgroundImage);
   };
 
-  //ルーティング
-  const router = useRouter();
-
-  const goToScoreCollections = () => {
-    router.push('/map/scoreCollections');
-  };
-
-  const goToPartsCollections = () => {
-    router.push('/map/partsCollections');
-  };
-
-  const goToTombsCollections = () => {
-    router.push('/map/tombsCollections');
-  };
-
-  const goToToHome = () => {
-    router.push('/');
-  };
-
   return (
     <div 
       className={styles.container}
@@ -141,103 +125,17 @@ const MapPage = () => {
         )}
       </div>
 
-      {/* 左側のメニュー */}
-      <div className={styles.menuFrame}>
-        <div className={styles.menuFrameBackground} />
-        <div className={styles.menuInner}>
-          <h2 className={styles.menuTitle}>メニュー</h2>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '5px',
-            paddingTop: '20px',
-          }}>
-            <div className={styles.buttonFrame}>
-              <div className={styles.buttonBackground} />
-              <button className={styles.menuButton} onClick={goToScoreCollections}>スコア一覧</button>
-              <div className={styles.buttonFrameBackground} />
-            </div>
-            <div className={styles.buttonFrame}>
-              <div className={styles.buttonBackground} />
-              <button className={styles.menuButton} onClick={goToPartsCollections}>パーツコレクション</button>
-              <div className={styles.buttonFrameBackground} />
-            </div>
-            <div className={styles.buttonFrame}>
-              <div className={styles.buttonBackground} />
-              <button className={styles.menuButton} onClick={goToTombsCollections}>古墳コレクション</button>
-              <div className={styles.buttonFrameBackground} />
-            </div>
-          </div>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '5px',
-          }}>
-            <div className={styles.menuLine} />
-            <div className={styles.buttonFrame}>
-              <div className={styles.buttonBackground} />
-              <button className={styles.menuButton} onClick={goToToHome}>ゲーム終了</button>
-              <div className={styles.buttonFrameBackground} />
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* メニューコンポーネントを使用 */}
+      <Menu />
 
-      {/* 右上の統治度表示 */}
-      <div className={styles.governanceFrame}>
-        <div className={styles.menuFrameBackground} />
-        <div className={styles.governanceInner}>
-          <table className={styles.governanceTable}>
-            <tbody>
-              <tr>
-                <td>日本の統治度</td>
-                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>24%</td>
-              </tr>
-              <tr>
-                <td colSpan={2} style={{ padding: '0px 0' }}>
-                  <div className={styles.menuLine}></div>
-                </td>
-              </tr>
-              <tr>
-                <td>関西の統治度</td>
-                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>50%</td>
-              </tr>
-              <tr>
-                <td>中部の統治度</td>
-                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
-              </tr>
-              <tr>
-                <td>関東の統治度</td>
-                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
-              </tr>
-              <tr>
-                <td>東北の統治度</td>
-                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
-              </tr>
-              <tr>
-                <td>中国の統治度</td>
-                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
-              </tr>
-              <tr>
-                <td>四国の統治度</td>
-                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
-              </tr>
-              <tr>
-                <td>九州の統治度</td>
-                <td style={{ textAlign: 'right', paddingLeft: '20px' }}>0%</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      {/* 統治度表示コンポーネント */}
+      <DominationMenu />
 
-      {/* 拡大縮小ボタン */}
-      <div className={styles.zoomControls}>
-        <button onClick={handleZoomOut} className={styles.zoomButton}>-</button>
-        <button onClick={handleZoomIn} className={styles.zoomButton}>+</button>
-      </div>
+      {/* 拡大縮小コントロール */}
+      <ZoomControls 
+        onZoomIn={handleZoomIn}
+        onZoomOut={handleZoomOut}
+      />
 
       {/* 右下の原寸画像とその背景 */}
       <div className={styles.nextButton}>

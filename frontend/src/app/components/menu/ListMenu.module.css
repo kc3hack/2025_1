@@ -1,0 +1,100 @@
+.menuFrame {
+    position: fixed;
+    top: 64px;
+    left: 27px;
+    width: 250px;
+    height: 350px;
+    padding: 0px 15px 47px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .menuFrameBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/frame/menu.png') no-repeat center center;
+    background-size: 100% 100%;
+    z-index: 2;
+  }
+
+  .menuInner {
+    width: 95%;
+    height: 95%;
+    background-color: #E5FFB6;
+    padding: 13px 15px 40px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 5px;
+    position: relative;
+    z-index: 1.5;
+  }
+  
+  .menuTitle {
+    margin: 0 0 16px 0;
+    font-size: 26px;
+    font-weight: bold;
+  }
+
+  .buttonFrame {
+    width: 250px;
+    height: 60px;
+    margin: 0px;
+    position: relative;
+  }
+
+  .buttonFrameBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/frame/button.png') no-repeat center center;
+    background-size: 100% 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  .buttonBackground {
+    width: 95%;
+    height: 80%;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #D5FF87;
+    border-radius: 5px;
+    z-index: 1;
+  }
+
+  .menuButton {
+    width: 100%;
+    height: 88%;
+    padding: 0;
+    padding-bottom: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    text-align: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: transparent;
+    position: relative;
+    z-index: 4;
+  }
+
+  .menuLine {
+    width: 250px;
+    height: 20px;
+    background: url('/frame/line.png') no-repeat center center;
+    background-size: 100% auto;
+    position: relative;
+    z-index: 1;
+  }
