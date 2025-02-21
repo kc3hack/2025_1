@@ -6,14 +6,28 @@ import { usePartsStore } from '@/app/store/partsStore';
 import { Position } from '@/app/types/Part';
 import { getPartImagePaths } from '@/app/types/Part';
 
-export default function GameGrid() {
+interface GameGridProps {
+    readOnly?: boolean;
+    gridState?: GridState | null;
+}
+
+export default function GameGrid({ readOnly, gridState }: GameGridProps) {
     const { currentPart, currentPosition, placedParts, initializeGame, moveCurrentPart, placePart } = usePartsStore();
 
-    useEffect(() => {
-        initializeGame();
-    }, [initializeGame]);
+    // gridStateが提供された場合はそれを使用し、そうでない場合はstoreのgridStateを使用
+    const storeGridState = usePartsStore(state => state.gridState);
+    const displayGrid = gridState || storeGridState;
 
     useEffect(() => {
+        // readOnlyモードでない場合のみ初期化
+        if (!readOnly) {
+            initializeGame();
+        }
+    }, [initializeGame, readOnly]);
+
+    useEffect(() => {
+        if (readOnly) return;
+
         const handleKeyDown = (e: KeyboardEvent) => {
             switch (e.key) {
                 case 'ArrowLeft':
@@ -36,7 +50,7 @@ export default function GameGrid() {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [moveCurrentPart, placePart]);
+    }, [moveCurrentPart, placePart, readOnly]);
 
     const renderPlacedParts = (row: number, col: number) => {
         // 設置済みパーツの描画
@@ -126,14 +140,16 @@ export default function GameGrid() {
                 {Array(cols).fill(0).map((_, col) => (
                     <div 
                         key={`tile-${row}-${col}`} 
-                        className={styles.tile}
+                        className={`${styles.tile} ${readOnly ? styles.readOnlyTile : ''}`}
                     >
-                        <img 
-                            src={isSafe ? '/parts/safeTile.png' : '/parts/tile.png'} 
-                            alt="tile" 
-                            className={styles.tileImage}
-                            draggable={false}
-                        />
+                        {!readOnly && (
+                            <img 
+                                src={isSafe ? '/parts/safeTile.png' : '/parts/tile.png'} 
+                                alt="tile" 
+                                className={styles.tileImage}
+                                draggable={false}
+                            />
+                        )}
                         {renderPlacedParts(row, col)}
                         {renderCurrentPart(row, col, isSafe)}
                     </div>
@@ -143,7 +159,7 @@ export default function GameGrid() {
     };
 
     return (
-        <div className={styles.grid}>
+        <div className={`${styles.grid} ${readOnly ? styles.readOnlyGrid : ''}`}>
             {renderTiles(5, 25, true)}   {/* セーフエリア */}
             {renderTiles(25, 25, false)} {/* 通常エリア */}
         </div>
