@@ -1,0 +1,27 @@
+.zoomControls {
+    position: absolute;
+    bottom: 75px;
+    left: 50px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  .zoomButton {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 5px solid #000000;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    cursor: pointer;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .zoomButton:hover {
+    background-color: #f0f0f0;
+    transition: background-color 0.2s;
+  }
