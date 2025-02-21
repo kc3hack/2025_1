@@ -1,0 +1,11 @@
+.japanMap {
+  position: absolute;
+  cursor: grab;
+  width: 50%;
+  height: 50%;
+  transition: opacity 0.3s;
+}
+
+.japanMap.dragging {
+  cursor: grabbing;
+} 
