@@ -2,6 +2,7 @@
 
 import EditPartsMenu from '../components/edit/EditPartsMenu'
 import NextButton from '../components/edit/NextButton'
+import HelpPanel from '../components/edit/HelpPanel'
 import ScorePanel from '../components/edit/ScorePanel'
 import TipsPanel from '../components/edit/TipsPanel'
 import styles from './styles.module.css'
@@ -75,6 +76,7 @@ export default function EditPage() {
         <div className={styles.container}>
             <EditPartsMenu />
             <GameGrid />
+            <HelpPanel />
             <ScorePanel />
             <TipsPanel tip={tips[currentTipIndex]} />
             <div className={styles.buttonGroup}>
