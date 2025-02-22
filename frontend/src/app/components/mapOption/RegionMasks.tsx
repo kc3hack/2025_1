@@ -10,7 +10,7 @@ interface BaseMapProps {
   scale: number;
   isLoaded: boolean;
   onPositionChange: (position: { x: number; y: number }) => void;
-  onMarkingComplete: (marking: { x: number; y: number }) => void;
+  onMarkingComplete: (marking: { x: number; y: number; region: string }) => void;
   onMarkingReset?: () => void;
 }
 
@@ -122,7 +122,6 @@ const RegionMasks = ({
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
 
-    // スケーリングを考慮したクリック位置の計算
     const scaleRatio = scale / 10;
     const x = (e.clientX - rect.left) / scaleRatio;
     const y = (e.clientY - rect.top) / scaleRatio;
@@ -130,7 +129,7 @@ const RegionMasks = ({
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
-    // defaultJapanの非透過部分（陸地）かチェック
+    // 陸地かどうかチェック
     const pixel = ctx.getImageData(x, y, 1, 1).data;
     const isLand = pixel[3] > 0;
 
@@ -139,14 +138,35 @@ const RegionMasks = ({
       return;
     }
 
-    // マスクされているかチェック
-    const isMasked = await checkMaskAtPosition(x, y);
-    if (isMasked) {
-      console.log('マスク領域のクリック');
+    // マスクされている地方をチェック
+    const maskedRegions = [
+      { id: 'Kansai', show: showMaskedKansai },
+      { id: 'Kanto', show: showMaskedKanto },
+      { id: 'Kyushu', show: showMaskedKyushu },
+      { id: 'Tohoku', show: showMaskedTohoku },
+      { id: 'Chubu', show: showMaskedChubu },
+      { id: 'Chugoku', show: showMaskedChugoku },
+      { id: 'Shikoku', show: showMaskedShikoku }
+    ];
+
+    // マスクされている地方かチェック
+    for (const region of maskedRegions) {
+      if (region.show) {
+        const isInMaskedRegion = await isPointInMask(region.id, x, y);
+        if (isInMaskedRegion) {
+          console.log('マスクされている地方です');
+          return;
+        }
+      }
+    }
+
+    // クリックした位置の地方を判定
+    const region = await determineRegion(x, y);
+    if (!region) {
+      console.log('地方を判定できませんでした');
       return;
     }
 
-    // ピンを追加（陸地でマスクなし）
     const newMarking = {
       x,
       y,
@@ -155,8 +175,28 @@ const RegionMasks = ({
     setMarkings(prev => [...prev, newMarking]);
     drawMarking(ctx, x, y);
     
-    // マーキング完了を通知
-    onMarkingComplete({ x, y });
+    onMarkingComplete({ x, y, region });
+  };
+
+  // 地方を判定する新しい関数
+  const determineRegion = async (x: number, y: number): Promise<string | null> => {
+    const regions = [
+      { name: '関西', id: 'Kansai' },
+      { name: '関東', id: 'Kanto' },
+      { name: '九州', id: 'Kyushu' },
+      { name: '東北', id: 'Tohoku' },
+      { name: '中部', id: 'Chubu' },
+      { name: '中国', id: 'Chugoku' },
+      { name: '四国', id: 'Shikoku' }
+    ];
+
+    for (const region of regions) {
+      const isInRegion = await isPointInMask(region.id, x, y);
+      if (isInRegion) {
+        return region.name;
+      }
+    }
+    return null;
   };
 
   const checkMaskAtPosition = async (x: number, y: number): Promise<boolean> => {
