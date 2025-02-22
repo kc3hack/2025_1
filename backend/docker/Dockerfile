@@ -1,6 +1,10 @@
 # Bun公式イメージを使用
 FROM oven/bun:1
 
+#  platform=linux/amd64 でビルド
+FROM --platform=linux/amd64 oven/bun:1 
+# Macの場合はコメントアウト
+
 # 作業ディレクトリ
 WORKDIR /app
 
