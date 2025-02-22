@@ -111,12 +111,11 @@ const MapPage = () => {
         isLoaded={isLoaded}
         onPositionChange={setPosition}
         onMarkingComplete={handleMarkingComplete}
-        onMarkingReset={handleMarkingReset}
-      />
+        onMarkingReset={handleMarkingReset} dominationLevels={{}}      />
 
       <Menu />
 
-      <DominationMenu />
+      <DominationMenu dominationLevels={{}} />
 
       <ZoomControls 
         onScaleChange={setScale}
