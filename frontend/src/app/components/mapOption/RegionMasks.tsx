@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import styles from './RegionMasks.module.css';
+import DominationMenu from '../menu/DominationMenu';
 
 interface BaseMapProps {
   onError?: (e: React.SyntheticEvent<HTMLDivElement, Event>) => void;
@@ -12,6 +13,7 @@ interface BaseMapProps {
   onPositionChange: (position: { x: number; y: number }) => void;
   onMarkingComplete: (marking: { x: number; y: number; region: string }) => void;
   onMarkingReset?: () => void;
+  dominationLevels: { [region: string]: number }; // 各地域の統治度を受け取る
 }
 
 const RegionMasks = ({ 
@@ -22,7 +24,8 @@ const RegionMasks = ({
   isLoaded,
   onPositionChange,
   onMarkingComplete,
-  onMarkingReset
+  onMarkingReset,
+  dominationLevels = { Tohoku: 100 } // Tohokuの初期値を100に設定
 }: BaseMapProps) => {
   const [showMaskedKansai, setShowMaskedKansai] = useState(false);
   const [showMaskedKanto, setShowMaskedKanto] = useState(true);
@@ -37,6 +40,7 @@ const RegionMasks = ({
   const imageRef = useRef<HTMLImageElement | null>(null);
   const [markings, setMarkings] = useState<{ x: number; y: number; timestamp: string }[]>([]);
   const markingResetRef = useRef<() => void | undefined>(undefined);
+  const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
     const img = new Image();
@@ -50,7 +54,7 @@ const RegionMasks = ({
 
   useEffect(() => {
     drawMasks();
-  }, [showMaskedKansai, showMaskedKanto, showMaskedKyushu, showMaskedTohoku, showMaskedChubu, showMaskedChugoku, showMaskedShikoku]);
+  }, [showMaskedKansai, showMaskedKanto, showMaskedKyushu, showMaskedTohoku, showMaskedChubu, showMaskedChugoku, showMaskedShikoku, dominationLevels]);
 
   const drawMap = () => {
     const canvas = canvasRef.current;
@@ -75,22 +79,32 @@ const RegionMasks = ({
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
-    const drawMask = (maskName: string) => {
+    const drawMask = (maskName: string, colorful: boolean) => {
       const maskImg = new Image();
-      maskImg.src = `/japan/mask/masked${maskName}.png`;
+      maskImg.src = `/japan/mask/${colorful ? 'colorful' : 'masked'}${maskName}.png`;
       maskImg.onload = () => {
         // マスクも同じサイズで描画
         ctx.drawImage(maskImg, 0, 0, canvas.width, canvas.height);
       };
     };
 
-    if (showMaskedKansai) drawMask('Kansai');
-    if (showMaskedKanto) drawMask('Kanto');
-    if (showMaskedKyushu) drawMask('Kyushu');
-    if (showMaskedTohoku) drawMask('Tohoku');
-    if (showMaskedChubu) drawMask('Chubu');
-    if (showMaskedChugoku) drawMask('Chugoku');
-    if (showMaskedShikoku) drawMask('Shikoku');
+    const regions = [
+      { id: 'Kansai', name: '関西', show: showMaskedKansai },
+      { id: 'Kanto', name: '関東', show: showMaskedKanto },
+      { id: 'Kyushu', name: '九州', show: showMaskedKyushu },
+      { id: 'Tohoku', name: '東北', show: showMaskedTohoku },
+      { id: 'Chubu', name: '中部', show: showMaskedChubu },
+      { id: 'Chugoku', name: '中国', show: showMaskedChugoku },
+      { id: 'Shikoku', name: '四国', show: showMaskedShikoku }
+    ];
+
+    regions.forEach(region => {
+      if (region.show) {
+        const dominationLevel = dominationLevels[region.id] || 0;
+        const colorful = dominationLevel === 100;
+        drawMask(region.id, colorful);
+      }
+    });
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -104,11 +118,20 @@ const RegionMasks = ({
 
   const handleMouseUp = () => {
     setDragging(false);
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!dragging) return;
-    onPositionChange({ x: e.pageX - rel.x, y: e.pageY - rel.y });
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    animationFrameRef.current = requestAnimationFrame(() => {
+      onPositionChange({ x: e.pageX - rel.x, y: e.pageY - rel.y });
+    });
     e.stopPropagation();
     e.preventDefault();
   };
@@ -212,8 +235,8 @@ const RegionMasks = ({
 
     for (const mask of masks) {
       if (mask.show) {
-        const isInMask = await isPointInMask(mask.name, x, y);
-        if (isInMask) return true;
+        const isInMaskedRegion = await isPointInMask(mask.name, x, y);
+        if (isInMaskedRegion) return true;
       }
     }
     return false;
@@ -225,7 +248,7 @@ const RegionMasks = ({
     if (!tempCtx) return false;
 
     const img = new Image();
-    img.src = `/japan/mask/masked${maskName}.png`;
+    img.src = `/japan/mask/${dominationLevels[maskName] === 100 ? 'colorful' : 'masked'}${maskName}.png`;
 
     return new Promise<boolean>((resolve) => {
       img.onload = () => {
@@ -311,8 +334,9 @@ const RegionMasks = ({
         className={`${styles.mapCanvas} ${isProcessing ? styles.clickable : ''}`}
         onClick={handleCanvasClick}
       />
+      <DominationMenu dominationLevels={dominationLevels} />
     </div>
   );
 };
 
-export default RegionMasks; 
+export default RegionMasks;
