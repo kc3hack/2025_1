@@ -17,7 +17,7 @@ services:
       - ./docker/mysql/logs:/var/log/mysql
       - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
     ports:
-      - "3306:3306"
+      - "3307:3306"
     platform: linux/arm64/v8
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
