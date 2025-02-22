@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Part, GameState, GamePart, rotatePart, Position, getPartWidth, getPartHeight, getLeftOffset, GamePosition, getConnectedDocks, canPlacePart, GridState, createEmptyGridState, updateGridState, PartCell, Rarity, PartGrid } from '../types/Part';
+import { Part, GameState, GamePart, rotatePart, Position, getPartWidth, getPartHeight, getLeftOffset, GamePosition, getConnectedDocks, canPlacePart, GridState, createEmptyGridState, updateGridState, PartCell, Rarity, PartGrid, DockConnection, getDockPositions } from '../types/Part';
 
 // 事前定義されたパーツパターン
 const PREDEFINED_PARTS: Part[] = [
@@ -323,27 +323,32 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
         const pos = currentPosition.tile!;
         const grid = currentPart.grid;
 
-        // グリッド状態をチェック
-        for (let i = 0; i < grid.length; i++) {
-            for (let j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] !== 0) {
-                    if (gridState[pos.y + i][pos.x + j] === 1) {
-                        console.log('設置失敗: 既に占有されているセル');
-                        return false;
+        // 新しい関数を使用
+        if (!canPlacePartWithValidation(grid, pos.x, pos.y, placedParts)) {
+            return false;
+        }
+
+        // 新しい関数を使用
+        const connections = getConnectedDocksWithValidation(grid, pos.x, pos.y, placedParts);
+        
+        // 最初のパーツのDockLastが接続されるかチェック
+        const firstPart = placedParts[0];
+        let willRemoveDockLast = false;
+        
+        // 3つ目以降のパーツの場合のみチェック
+        if (firstPart && placedParts.length >= 2) {
+            const firstPartDocks = getDockPositions(firstPart.grid);
+            for (const conn of connections) {
+                if (conn.targetPart === firstPart) {
+                    const dockKey = `${conn.targetDock.x},${conn.targetDock.y}`;
+                    if (!firstPart.usedDocks.has(dockKey)) {
+                        willRemoveDockLast = true;
+                        break;
                     }
                 }
             }
         }
 
-        // 設置位置で接続可能かチェック
-        if (!canPlacePart(grid, pos.x, pos.y, placedParts)) {
-            console.log('設置失敗: 接続条件を満たしていません');
-            return false;
-        }
-
-        // 接続するドックを取得
-        const connections = getConnectedDocks(grid, pos.x, pos.y, placedParts);
-        
         // 新しいパーツのグリッドを作成（接続されたドックを通常ブロックに変更）
         const newGrid = grid.map(row => [...row]) as PartGrid;
         connections.forEach(conn => {
@@ -362,17 +367,38 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             }
         });
 
-        // 新しいパーツを作成（更新したグリッドを使用）
+        // 新しいパーツを作成
         const newPart: GamePart = {
             ...currentPart,
-            grid: newGrid,  // 更新したグリッドを使用
+            grid: newGrid,
             position: { x: pos.x, y: pos.y },
             isPlaced: true,
             usedDocks: new Set(connections.map(c => `${c.sourceDock.x},${c.sourceDock.y}`))
         };
 
-        // グリッド状態を更新（更新したグリッドを使用）
+        // グリッド状態を更新
         const newGridState = updateGridState(gridState, { ...newPart, grid: newGrid }, pos.x, pos.y);
+
+        // DockLastが消える場合はゲームを終了
+        if (willRemoveDockLast) {
+            set(state => ({
+                ...state,
+                placedParts: [...placedParts, newPart],
+                currentPart: null,
+                availableParts: [],
+                currentPosition: {
+                    safeTile: { x: 10, y: 0 },
+                    mode: 'safeTile'
+                },
+                score: state.score + currentPart.points,
+                gridState: newGridState,
+                isGameOver: true,
+                isCompleted: true,
+                shouldNavigateToPreview: true,
+                completedGridState: newGridState
+            }));
+            return true;
+        }
 
         // 全てのパーツの未接続ドックをチェック
         const checkAllDocsConnected = () => {
@@ -394,7 +420,6 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
         };
 
         const isAllConnected = checkAllDocsConnected();
-
         set(state => ({
             ...state,
             placedParts: [...placedParts, newPart],
@@ -409,7 +434,7 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
             isGameOver: isAllConnected,
             isCompleted: isAllConnected,
             shouldNavigateToPreview: isAllConnected,
-            completedGridState: isAllConnected ? newGridState : null  // 完成時のgridを保存
+            completedGridState: isAllConnected ? newGridState : null
         }));
 
         return true;
@@ -550,4 +575,108 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
 function getRandomUniqueParts(count: number): Part[] {
     const shuffled = [...PREDEFINED_PARTS].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, count);
+}
+
+export function canPlacePartWithValidation(
+    grid: PartGrid,
+    x: number,
+    y: number,
+    placedParts: GamePart[]
+): boolean {
+    // 3. 初回パーツはチェック不要
+    if (placedParts.length === 0) {
+        return true;
+    }
+
+    // 4. ドック接続チェック
+    const dockPositions = getDockPositions(grid);
+    let hasValidConnection = false;
+    let connectedToLastDock = false;
+
+    // 各ドックについて接続チェック
+    for (const dock of dockPositions) {
+        const dockX = x + dock.x;
+        const dockY = y + dock.y;
+
+        for (const placedPart of placedParts) {
+            if (!placedPart.position) continue;
+
+            const placedDocks = getDockPositions(placedPart.grid);
+            for (const placedDock of placedDocks) {
+                const pdx = placedPart.position.x + placedDock.x;
+                const pdy = placedPart.position.y + placedDock.y;
+
+                // 隣接チェック（上下左右のみ）
+                if ((Math.abs(dockX - pdx) === 1 && dockY === pdy) || 
+                    (Math.abs(dockY - pdy) === 1 && dockX === pdx)) {
+                    // 2つ目のパーツは自由に接続可能
+                    if (placedParts.length === 1) {
+                        return true;
+                    }
+
+                    // 3つ目以降のパーツの場合
+                    const isFirstPart = placedPart === placedParts[0];
+                    const isDockUsed = placedPart.usedDocks.has(`${placedDock.x},${placedDock.y}`);
+
+                    // 最初のパーツの未使用ドックには接続不可
+                    if (isFirstPart && !isDockUsed) {
+                        connectedToLastDock = true;
+                        continue;
+                    }
+
+                    hasValidConnection = true;
+                }
+            }
+        }
+    }
+
+    // 最後のドックに接続する場合は、他のドックも必ず接続されている必要がある
+    if (connectedToLastDock && !hasValidConnection) {
+        console.log('最後のドックに接続する場合は、他のドックも接続が必要です');
+        return false;
+    }
+
+    if (!hasValidConnection && !connectedToLastDock) {
+        console.log('接続条件を満たしていません');
+        return false;
+    }
+
+    return true;
+}
+
+export function getConnectedDocksWithValidation(
+    grid: PartGrid,
+    x: number,
+    y: number,
+    placedParts: GamePart[]
+): DockConnection[] {
+    const connections: DockConnection[] = [];
+    const dockPositions = getDockPositions(grid);
+
+    for (const dock of dockPositions) {
+        const dockX = x + dock.x;
+        const dockY = y + dock.y;
+        
+        for (const placedPart of placedParts) {
+            if (!placedPart.position) continue;
+            
+            const placedDocks = getDockPositions(placedPart.grid);
+            for (const placedDock of placedDocks) {
+                const pdx = placedPart.position.x + placedDock.x;
+                const pdy = placedPart.position.y + placedDock.y;
+                
+                // 隣接チェック（上下左右のみ）
+                if ((Math.abs(dockX - pdx) === 1 && dockY === pdy) || 
+                    (Math.abs(dockY - pdy) === 1 && dockX === pdx)) {
+                    connections.push({
+                        sourceDock: { x: dock.x, y: dock.y },
+                        targetDock: { x: placedDock.x, y: placedDock.y },
+                        targetPart: placedPart
+                    });
+                }
+            }
+        }
+    }
+
+    return connections;
 } 
