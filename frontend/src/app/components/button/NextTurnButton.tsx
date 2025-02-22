@@ -5,9 +5,10 @@ import styles from './NextTurnButton.module.css';
 
 interface NextTurnButtonProps {
   onProcessingChange: (isProcessing: boolean) => void;
+  randomPartsNum: number;
 }
 
-const NextTurnButton = ({ onProcessingChange }: NextTurnButtonProps) => {
+const NextTurnButton = ({ onProcessingChange, randomPartsNum }: NextTurnButtonProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleClick = () => {
@@ -30,7 +31,7 @@ const NextTurnButton = ({ onProcessingChange }: NextTurnButtonProps) => {
         {!isProcessing ? (
           <>
             <div className={styles.nextButtonTitle}>勢力を拡大する</div>
-            <div>ランダム数: 10</div>
+            <div>ランダム数: {randomPartsNum}</div>
           </>
         ) : (
           <>

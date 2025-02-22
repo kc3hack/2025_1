@@ -19,7 +19,8 @@ prisma.$connect()
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-auth.post('/auth', async (c) => {
+// ログイン/登録エンドポイント
+auth.post('/login', async (c) => {
   try {
     const { username, password } = await c.req.json();
     console.log('\n=== Authentication Request ===');

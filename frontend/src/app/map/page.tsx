@@ -11,6 +11,13 @@ import RegionMasks from '../components/mapOption/RegionMasks';
 import DraggableMap from '../components/mapOption/DraggableMap';
 import NextTurnButton from '../components/button/NextTurnButton';
 
+interface UserData {
+  user_id: string;
+  marking_point_x: number;
+  marking_point_y: number;
+  random_parts_num: number;
+}
+
 const MapPage = () => {
   const [position, setPosition] = useState({ x: -200, y: -2400 });
   const [isLoaded, setIsLoaded] = useState(false);
@@ -18,6 +25,8 @@ const MapPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [currentMarking, setCurrentMarking] = useState<{ x: number; y: number } | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string>('');
+  const [userData, setUserData] = useState<UserData | null>(null);
   
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
   const router = useRouter();
@@ -37,6 +46,30 @@ const MapPage = () => {
       setShowCompletionModal(false);
     };
   }, [setShowCompletionModal]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        
+        const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch user data');
+        
+        const data = await response.json();
+        setUserData(data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
     console.error('画像の読み込みに失敗しました:', (e.target as HTMLDivElement).style.backgroundImage);
@@ -89,6 +122,7 @@ const MapPage = () => {
 
       <NextTurnButton 
         onProcessingChange={setIsProcessing}
+        randomPartsNum={userData?.random_parts_num ?? 10}
       />
 
       {showCompletionModal && (
