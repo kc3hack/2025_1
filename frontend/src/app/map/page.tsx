@@ -24,9 +24,10 @@ const MapPage = () => {
   const [scale, setScale] = useState(20);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [currentMarking, setCurrentMarking] = useState<{ x: number; y: number } | null>(null);
+  const [currentMarking, setCurrentMarking] = useState<{ x: number; y: number; region: string } | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string>('');
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
   const router = useRouter();
@@ -75,8 +76,10 @@ const MapPage = () => {
     console.error('画像の読み込みに失敗しました:', (e.target as HTMLDivElement).style.backgroundImage);
   };
 
-  const handleMarkingComplete = (marking: { x: number; y: number }) => {
+  const handleMarkingComplete = (marking: { x: number; y: number; region: string }) => {
     setCurrentMarking(marking);
+    console.log(`選択した座標: (${marking.x}, ${marking.y}), 地方: ${marking.region}`);
+    setSelectedRegion(marking.region);
     setShowConfirmModal(true);
   };
 
@@ -146,6 +149,9 @@ const MapPage = () => {
             <div className={styles.modalFrame} />
             <div className={styles.modalContent}>
               <h2>マーキング位置の確認</h2>
+              <div className={styles.regionInfo}>
+                <p>選択した地方: <span className={styles.regionName}>{selectedRegion}</span></p>
+              </div>
               <p>この位置で決定しますか？</p>
               <div className={styles.modalButtons}>
                 <div className={styles.buttonContainer}>
