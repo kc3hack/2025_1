@@ -1,27 +1,27 @@
+import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import auth from './routes/auth';
+
+const port = Number(process.env.PORT || 3001);
+const host = process.env.HOST || '0.0.0.0';
 
 const app = new Hono();
 
-// 基本的な動作確認用エンドポイント
-app.get('/', (c) => {
-  return c.json({ message: 'Hello, World!' })
-});
+// CORSミドルウェアを先に設定
+app.use('*', cors({
+  origin: ['http://localhost:3000'],
+  allowMethods: ['POST', 'GET', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization'],
+}));
 
-// データベース接続確認用エンドポイント
-app.get('/health', async (c) => {
-  try {
-    // ここにデータベース接続確認のコードを追加
-    return c.json({ status: 'ok', message: 'Server is healthy!' })
-  } catch (error: any) {
-    return c.json({ status: 'error', message: error.message }, 500)
-  }
-});
+// ルートにauthルーターをマウント
+app.route('/', auth);
 
-const port = Number(process.env.PORT || 3001);
+console.log(`Server is starting on ${host}:${port}`);
 
-console.log(`Server is starting on port ${port}`);
-
-export default {
+serve({
+  fetch: app.fetch,
   port,
-  fetch: app.fetch
-};
+  hostname: host
+});
