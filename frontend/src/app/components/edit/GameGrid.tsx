@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import styles from './GameGrid.module.css'
 import { usePartsStore } from '@/app/store/partsStore';
-import { Position } from '@/app/types/Part';
+import { Position, GridState } from '@/app/types/Part';
 import { getPartImagePaths } from '@/app/types/Part';
 
 interface GameGridProps {
@@ -65,7 +65,21 @@ export default function GameGrid({ readOnly, gridState }: GameGridProps) {
                 const cell = part.grid[relativeRow][relativeCol];
                 if (cell === 0) continue;
 
-                // ドックの表示ルールを適用
+                // プレビューモードまたはゲーム完了時は全てのセルを通常パーツとして表示
+                if ((readOnly || usePartsStore.getState().isCompleted) && cell === 2) {
+                    return (
+                        <div className={styles.partCell}>
+                            <img 
+                                src={part.imageUrl}
+                                alt="part" 
+                                className={styles.partImage}
+                                draggable={false}
+                            />
+                        </div>
+                    );
+                }
+
+                // 通常モードの場合は従来通りの表示ルール
                 let imageUrl = part.imageUrl;
                 if (cell === 2) {
                     const isFirstPart = part === placedParts[0];
@@ -73,10 +87,8 @@ export default function GameGrid({ readOnly, gridState }: GameGridProps) {
                     const imagePaths = getPartImagePaths(part.rarity);
                     
                     if (isFirstPart && !isDockUsed && placedParts.length > 1) {
-                        // 最初のパーツの未接続ドックのみdockLast
                         imageUrl = imagePaths.dockLast;
                     } else {
-                        // その他のドックは通常のdock
                         imageUrl = imagePaths.dock;
                     }
                 }

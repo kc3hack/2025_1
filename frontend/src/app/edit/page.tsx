@@ -11,6 +11,7 @@ import PartsList from '../components/edit/PartsList'
 import GameGrid from '../components/edit/GameGrid'
 import { usePartsStore } from '@/app/store/partsStore'
 import { useRouter } from 'next/navigation'
+import { createEmptyGridState } from '@/app/types/Part'
 
 const tips = [
     "古墳は、3世紀後半から7世紀頃の日本で作られた墳墓。権力者や豪族の墓として作られたもので、規模や形状がさまざま。",
@@ -47,11 +48,33 @@ export default function EditPage() {
         const handleKeyDown = (e: KeyboardEvent) => {
             // Command + Shift + D で即完成（mac用）
             if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'D') {
+                // 全てのパーツのDockを通常ブロックに変換し、usedDocksを全て使用済みにする
+                const normalizedParts = usePartsStore.getState().placedParts.map(part => {
+                    // 全てのDockの位置を取得
+                    const docks = new Set<string>();
+                    part.grid.forEach((row, y) => {
+                        row.forEach((cell, x) => {
+                            if (cell === 2) {
+                                docks.add(`${x},${y}`);
+                            }
+                        });
+                    });
+
+                    return {
+                        ...part,
+                        grid: part.grid.map(row => 
+                            row.map(cell => cell === 2 ? 1 : cell)
+                        ),
+                        usedDocks: docks  // 全てのDockを使用済みにする
+                    };
+                });
+
                 usePartsStore.setState(state => ({
                     ...state,
                     isCompleted: true,
                     shouldNavigateToPreview: true,
-                    completedGridState: state.gridState
+                    completedGridState: state.gridState,
+                    placedParts: normalizedParts
                 }));
                 router.push('/edit/editPreview');
             }
