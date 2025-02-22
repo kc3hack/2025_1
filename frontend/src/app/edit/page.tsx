@@ -90,9 +90,6 @@ export default function EditPage() {
 
     const handlePlacePart = () => {
         const success = placePart();
-        if (success) {
-            router.push('/edit/editPreview');
-        }
     };
 
     return (
