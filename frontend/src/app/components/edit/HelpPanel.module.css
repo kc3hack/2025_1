@@ -1,7 +1,7 @@
 .helpButton {
- position:fixed;
- right: 70px;
- top: 50px;
+  position:fixed;
+  right: 70px;
+  top: 50px;
   width: 400px;
   height: 140px;
   background-color: #007bff;
@@ -32,8 +32,8 @@
 }
 
 .modal {
- width: 80%;
- height: 90%;
+  width: 95%;
+  height: 95%;
   background: white;
   padding: 20px;
   border-radius: 10px;
@@ -61,10 +61,19 @@
 
 .detailContents {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   flex-basis: auto;
   align-items: center;
   margin-top: 20px;
+}
+
+.img-container {
+  width: 100%;
+  height: 100vh; /* 画面全体に画像を表示 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black; /* 画像が小さいときの背景色 */
 }
 
 .detail1Image {
@@ -102,8 +111,8 @@
 
 .closeButton {
   position: fixed;
-  right: 20rem;
-  bottom: 8rem;
+  right: 1rem;
+  bottom: 1rem;
   width: 20rem;
   height: 10rem;
   padding: 8px 20px;

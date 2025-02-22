@@ -24,47 +24,55 @@ const HelpPanel: React.FC = () => {
             <h1>遊び方</h1>
             <div className={styles.detailContainer}>
                 <div className={styles.detail}>
-                    <div className={styles.detailIndex}>①</div>
-                    <div className={styles.detailContents}>
-                        <div className={styles.detail1Image}/>
-                        <div className={styles.detailText}>
-                            <p>まずはパーツを十字キーを使って"パーツ生成ゾーン"から</p>
-                                "プレイゾーン"に持っていきましょう。
-                            <p>プレイゾーンでのみパーツの"回転"及び"設置"が出来ます。</p>
-                        </div>
+                  <div className={styles.detailContents}>
+                    <div className={styles.imageContainer}>
+                      <div className={styles.detailIndex}>①</div>
+                      <div className={styles.detail1Image}/>
                     </div>
+                    <div className={styles.detailText}>
+                        <p>まずはパーツを十字キーを使って"パーツ生成ゾーン"から
+                            "プレイゾーン"に持っていきましょう。</p>
+                        <p>プレイゾーンでのみパーツの"回転"及び"設置"が出来ます。</p>
+                    </div>
+                  </div>
                 </div>
                 <div className={styles.detail}>
-                    <div className={styles.detailIndex}>②</div>
-                    <div className={styles.detailContents}>
-                        <div className={styles.detail2Image}></div>
-                        <div className={styles.detailText}>
-                            <p>次にパーツを設置していきましょう。</p>
-                            <p>各パーツには"接続ドック（黄色のブロック）が２つあり、接続ドック動詞を隣接して
-                            置かなければなりません。</p>
-                            <p>また、二つのパーツを設置すると特別な接続ドックが出現します。（水色のブロック）</p>
-                        </div>
+                  <div className={styles.detailContents}>
+                    <div className={styles.imageContainer}>
+                      <div className={styles.detailIndex}>②</div>
+                      <div className={styles.detail2Image}></div>
                     </div>
+                    <div className={styles.detailText}>
+                        <p>次にパーツを設置していきましょう。</p>
+                        <p>各パーツには"接続ドック（黄色のブロック）が２つあり、接続ドック動詞を隣接して
+                        置かなければなりません。</p>
+                        <p>また、二つのパーツを設置すると特別な接続ドックが出現します。（水色のブロック）</p>
+                    </div>
+                  </div>
                 </div>
                 <div className={styles.detail}>
-                    <div className={styles.detailIndex}>③</div>
-                    <div className={styles.detailContents}>
-                        <div className={styles.detail3Image}></div>
-                        <div className={styles.detailText}>
-                            <p>この接続ドックに隣接するパーツを設置ことで古墳が完成です。</p>
-                        </div>
+                  <div className={styles.detailContents}>
+                    <div className={styles.imageContainer}>
+                      <div className={styles.detailIndex}>③</div>
+                      <div className={styles.detail3Image}></div>
                     </div>
+                    <div className={styles.detailText}>
+                        <p>この接続ドックに隣接するパーツを設置ことで古墳が完成です。</p>
+                    </div>
+                  </div>
                 </div>
                 <div className={styles.detail}>
-                    <div className={styles.detailIndex}>④</div>
-                    <div className={styles.detailContents}>
-                        <div className={styles.detail4Image}></div>
-                        <div className={styles.detailText}>
-                            <p>古墳が完成しないともらえるスコアは減少してしまいます。（このスコアは統治度に影響します。）</p>
-                            <p>たくさんのパーツを設置してスコアを稼ぐか、少ないパーツでも古墳を完成させることを優先するかはプレイヤー次第です。</p>
-                            <p>では古墳づくりを楽しんでください！</p>
-                        </div>
+                  <div className={styles.detailContents}>
+                    <div className={styles.imageContainer}>
+                      <div className={styles.detailIndex}>④</div>
+                      <div className={styles.detail4Image}></div>
                     </div>
+                    <div className={styles.detailText}>
+                        <p>古墳が完成しないともらえるスコアは減少してしまいます。（このスコアは統治度に影響します。）</p>
+                        <p>たくさんのパーツを設置してスコアを稼ぐか、少ないパーツでも古墳を完成させることを優先するかはプレイヤー次第です。</p>
+                        <p>では古墳づくりを楽しんでください！</p>
+                    </div>
+                  </div>
                 </div>
                 <button className={styles.closeButton} onClick={closeModal}>
                 閉じる
