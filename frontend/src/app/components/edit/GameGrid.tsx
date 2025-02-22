@@ -6,6 +6,9 @@ import { usePartsStore } from '@/app/store/partsStore';
 import { Position } from '@/app/types/Part';
 import { getPartImagePaths } from '@/app/types/Part';
 
+// GridState型を修正
+type GridState = (0 | 1)[][];
+
 interface GameGridProps {
     readOnly?: boolean;
     gridState?: GridState | null;
