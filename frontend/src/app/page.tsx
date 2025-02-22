@@ -11,6 +11,11 @@ const StartPage: React.FC = () => {
   const router = useRouter();
 
   const goToMap = async () => {
+    if (!userName || !password) {
+      setErrorMessage('ログイン失敗');
+      return;
+    }
+
     try {
       console.log('Attempting authentication for user:', userName);
       const response = await fetch('http://localhost:3001/api/auth/login', {
@@ -27,6 +32,7 @@ const StartPage: React.FC = () => {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Authentication failed:', errorData);
+        setErrorMessage('認証に失敗しました');
         return;
       }
 
@@ -39,10 +45,9 @@ const StartPage: React.FC = () => {
       router.push('/map');
     } catch (error) {
       console.error('Error during authentication:', error);
+      setErrorMessage('認証中にエラーが発生しました');
     }
   };
-
-  const isFormValid = userName && password;
 
   return (
     <div className={styles.container}>
@@ -77,15 +82,22 @@ const StartPage: React.FC = () => {
             />
             <div className={styles.passWordBackground} />
           </div>
-          <button
-            type="submit"
-            className={styles.button}
-            onClick={goToMap}
-            disabled={!isFormValid} // フォームが無効な場合はボタンを無効化
-          >
-            ゲームスタート
-          </button>
-          <div className={styles.buttonBackground} />
+          <div className={styles.buttonContainer}>
+            <button
+              type="submit"
+              className={styles.button}
+              onClick={goToMap}
+            >
+              ゲームスタート
+            </button>
+            <div className={styles.buttonBackground} />
+          </div>
+          {errorMessage && (
+            <div className={styles.errorMessageContainer}>
+              <div className={styles.errorMessage}>{errorMessage}</div>
+              <div className={styles.errorMessageBackground} />
+            </div>
+          )}
         </div>
       </div>
     </div>
