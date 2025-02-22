@@ -31,12 +31,13 @@ services:
     restart: always
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=mysql://root:password@db:3306/mydb?connection_limit=5&connect_timeout=300
+      - DATABASE_URL=mysql://root:password@db:3306/mydb
       - PORT=3001
       - HOST=0.0.0.0
       - DEBUG=prisma:*,hono:*
     ports:
       - "3001:3001"
+      - "5555:5555"
     depends_on:
       db:
         condition: service_healthy
@@ -50,6 +51,7 @@ services:
         echo 'Running migrations...' &&
         bunx prisma migrate deploy &&
         echo 'Generating Prisma Client...' &&
+        rm -rf node_modules/.prisma/client &&
         bunx prisma generate &&
         echo 'Starting server...' &&
         bun run --hot src/server.ts
