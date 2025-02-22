@@ -37,9 +37,9 @@ const PREDEFINED_PARTS: Part[] = [
     ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
         id: `${quality}3`,
         grid: [
-            [0, 0, 0, 0, 0] as PartCell[],
             [0, 2, 0, 0, 0] as PartCell[],
             [0, 1, 2, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[],
             [0, 0, 0, 0, 0] as PartCell[],
             [0, 0, 0, 0, 0] as PartCell[]
         ],
@@ -97,10 +97,10 @@ const PREDEFINED_PARTS: Part[] = [
     ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
         id: `${quality}7`,
         grid: [
-            [0, 0, 0, 0, 0] as PartCell[],
             [0, 0, 2, 0, 0] as PartCell[],
             [0, 0, 1, 0, 0] as PartCell[],
             [0, 0, 2, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[],
             [0, 0, 0, 0, 0] as PartCell[]
         ],
         rarity: (index + 1) as Rarity,
@@ -142,10 +142,10 @@ const PREDEFINED_PARTS: Part[] = [
     ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
         id: `${quality}10`,
         grid: [
-            [0, 0, 0, 0, 0] as PartCell[],
             [0, 2, 0, 0, 0] as PartCell[],
             [0, 1, 1, 0, 0] as PartCell[],
             [0, 2, 0, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[],
             [0, 0, 0, 0, 0] as PartCell[]
         ],
         rarity: (index + 1) as Rarity,
@@ -157,10 +157,10 @@ const PREDEFINED_PARTS: Part[] = [
     ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
         id: `${quality}11`,
         grid: [
-            [0, 0, 0, 0, 0] as PartCell[],
             [0, 2, 0, 0, 0] as PartCell[],
             [0, 1, 1, 0, 0] as PartCell[],
             [0, 0, 2, 0, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[],
             [0, 0, 0, 0, 0] as PartCell[]
         ],
         rarity: (index + 1) as Rarity,
@@ -187,10 +187,10 @@ const PREDEFINED_PARTS: Part[] = [
     ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
         id: `${quality}13`,
         grid: [
-            [0, 0, 0, 0, 0] as PartCell[],
             [0, 2, 0, 0, 0] as PartCell[],
             [0, 1, 0, 0, 0] as PartCell[],
             [0, 1, 1, 2, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[],
             [0, 0, 0, 0, 0] as PartCell[]
         ],
         rarity: (index + 1) as Rarity,
@@ -202,10 +202,10 @@ const PREDEFINED_PARTS: Part[] = [
     ...['soil', 'bronze', 'iron', 'diamond'].map((quality, index) => ({
         id: `${quality}14`,
         grid: [
-            [0, 0, 0, 0, 0] as PartCell[],
             [0, 0, 0, 2, 0] as PartCell[],
             [0, 0, 0, 1, 0] as PartCell[],
             [0, 0, 2, 1, 0] as PartCell[],
+            [0, 0, 0, 0, 0] as PartCell[],
             [0, 0, 0, 0, 0] as PartCell[]
         ],
         rarity: (index + 1) as Rarity,
