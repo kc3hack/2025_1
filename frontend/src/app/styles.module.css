@@ -56,7 +56,6 @@
   background-color: #f3f4f6;
   color: black;
   border-radius: 0.6rem;
-  margin-top: 50px;
   cursor: pointer;
 }
 
@@ -93,10 +92,21 @@
   pointer-events: none;
 }
 
+.buttonContainer {
+  width: 500px;
+  height: 80px;
+  padding: 0.5rem;
+  font-size: 3rem;
+  font-weight: bold;
+  color: black;
+  border-radius: 0.6rem;
+  cursor: pointer;
+}
+
 .buttonBackground {
   position: relative;
-  bottom: 140px;
-  left: 0px;
+  top: -85px;
+  left: -5px;
   width: 508px;
   height: 90px;
   background: url('/frame/start.png') no-repeat center center;
@@ -112,4 +122,35 @@
 
 .button:hover:enabled {
   background-color: #0056b3;
+}
+
+.errorMessageContainer {
+  width: 500px;
+  height: 80px;
+  padding: 0.5rem;
+  font-size: 3rem;
+  font-weight: bold;
+  color: black;
+  border-radius: 0.6rem;
+}
+
+.errorMessage {
+  color: red;
+  background-color: whitesmoke;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  border-radius: 0.6rem;
+}
+
+.errorMessageBackground {
+  position: relative;
+  top: -50px;
+  left: -5px;
+  width: 508px;
+  height: 57px;
+  background: url('/frame/start.png') no-repeat center center;
+  background-size: 100% 100%;
+  z-index: 0;
+  pointer-events: none;
 }
