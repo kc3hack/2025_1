@@ -18,8 +18,10 @@ RUN bun add -d typescript
 # ソースコードをコピー
 COPY . .
 
-# Prismaの生成をビルド時に実行
-RUN bunx prisma generate
+# Prismaの生成を修正
+RUN bunx prisma generate --no-engine && \
+    rm -rf node_modules/.prisma/client && \
+    bunx prisma generate
 
 # アプリを実行
 CMD ["bun", "run", "--hot", "src/server.ts"]
