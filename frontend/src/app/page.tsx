@@ -13,7 +13,7 @@ const StartPage: React.FC = () => {
   const goToMap = async () => {
     try {
       console.log('Attempting authentication for user:', userName);
-      const response = await fetch('http://localhost:3001/auth', {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
