@@ -1,30 +1,27 @@
 version: "3.8"
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql_container
+  db:
+    image: mysql:8.0
+    container_name: kofun_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: mydb
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
       TZ: Asia/Tokyo
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
-      - ./docker/mysql/logs:/var/log/mysql
-      - /usr/share/zoneinfo:/usr/share/zoneinfo:ro
-    ports:
-      - "3307:3306"
     platform: linux/arm64/v8
+    command: --default-authentication-plugin=mysql_native_password
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
-      interval: 10s
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
       start_period: 30s
+    networks:
+      - app-network
 
   backend:
     build: 
@@ -34,20 +31,36 @@ services:
     restart: always
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=mysql://root:rootpassword@mysql:3306/mydb
+      - DATABASE_URL=mysql://root:password@db:3306/mydb?connection_limit=5&connect_timeout=300
       - PORT=3001
       - HOST=0.0.0.0
-      - TZ=Asia/Tokyo
+      - DEBUG=prisma:*,hono:*
     ports:
       - "3001:3001"
     depends_on:
-      mysql:
+      db:
         condition: service_healthy
-    command: ["sh", "-c", "while ! nc -z mysql 3306; do sleep 1; done; bun run --hot src/server.ts"]
-    tty: true
-    stdin_open: true
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        sleep 10 &&
+        echo 'Running migrations...' &&
+        bunx prisma migrate deploy &&
+        echo 'Generating Prisma Client...' &&
+        bunx prisma generate &&
+        echo 'Starting server...' &&
+        bun run --hot src/server.ts
+      "
     platform: linux/arm64/v8
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   mysql_data:
-  mysqld:

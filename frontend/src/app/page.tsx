@@ -10,11 +10,35 @@ const StartPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
-  const goToMap = () => {
-    if (userName && password) {
+  const goToMap = async () => {
+    try {
+      console.log('Attempting authentication for user:', userName);
+      const response = await fetch('http://localhost:3001/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: userName,
+          password: password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Authentication failed:', errorData);
+        return;
+      }
+
+      const data = await response.json();
+      console.log(`✅ ${data.status === 'login_success' ? 'ログイン' : '新規登録'}成功:`, data);
+      
+      // 認証成功時の処理
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.userId);
       router.push('/map');
-    } else {
-      setErrorMessage('ユーザー名とパスワードを入力してください。');
+    } catch (error) {
+      console.error('Error during authentication:', error);
     }
   };
 

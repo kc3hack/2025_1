@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {
@@ -8,40 +9,53 @@ datasource db {
 }
 
 model User {
-  userID    String   @id
-  created_at DateTime @default(now())
-  parts     UserPart[]
-  fortresses Fortress[]
+  user_id     String    @id @default(uuid())
+  user_name   String    
+  password    String
+  created_at  DateTime  @default(now())
+  parts       UserPart[]
+  fortresses  Fortress[]
+
+  @@unique([user_name, password])
+  @@map("users")
 }
 
 model Part {
-  part_number    Int      @id
-  shape          String
-  material_number Int
-  material       Material @relation(fields: [material_number], references: [material_number])
-  userParts      UserPart[]
+  id            Int       @id @default(autoincrement())
+  shape         String
+  materialId    Int       @map("material_id")
+  material      Material  @relation(fields: [materialId], references: [id])
+  userParts     UserPart[]
+
+  @@map("parts")
 }
 
 model Material {
-  material_number Int      @id
-  part_material   String
-  parts           Part[]   // 逆リレーションを追加
+  id           Int     @id @default(autoincrement())
+  name         String  @map("part_material")
+  parts        Part[]
+
+  @@map("materials")
 }
 
 model UserPart {
-  id          Int   @id @default(autoincrement())
-  user        User  @relation(fields: [userID], references: [userID])
-  userID      String
-  part        Part  @relation(fields: [part_number], references: [part_number])
-  part_number Int
+  id          Int      @id @default(autoincrement())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [user_id])
+  partId      Int      @map("part_id")
+  part        Part     @relation(fields: [partId], references: [id])
   domination  Float
-  created_at  DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@map("user_parts")
 }
 
 model Fortress {
-  id                 Int     @id @default(autoincrement())
-  user               User    @relation(fields: [userID], references: [userID])
-  userID             String
-  completed_fortress String
-  created_at         DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [user_id])
+  name        String   @map("completed_fortress")
+  createdAt   DateTime @default(now())
+
+  @@map("fortresses")
 }

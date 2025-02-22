@@ -1,33 +1,27 @@
 # Bun公式イメージを使用
-FROM oven/bun:1
+FROM oven/bun:latest
 
 # 作業ディレクトリ
 WORKDIR /app
 
-# 依存関係をコピー
-ADD ../package.json ../bun.lock ./
+# package.jsonをコピー
+COPY package.json .
+
+# 依存関係をインストール
 RUN bun install
+
+# アプリをビルド（必要なら）
 RUN bun add -d bun-types
 RUN bun update hono
 RUN bun add -d typescript
 
-# アプリコードをコピー
+# ソースコードをコピー
 COPY . .
 
-# MySQLクライアントとnetcatをインストール
-RUN apt-get update && apt-get install -y \
-    default-mysql-client \
-    netcat-traditional \
-    nodejs \
-    npm
-
-# Node.js と npm のインストール
-RUN apt-get update && apt-get install -y nodejs npm
-
-# アプリをビルド（必要なら）
-RUN npm install -g typescript
+# Prismaの生成をビルド時に実行
+RUN bunx prisma generate
 
 # アプリを実行
-CMD ["bun", "run", "dev"]
+CMD ["bun", "run", "--hot", "src/server.ts"]
 
 EXPOSE 3001
