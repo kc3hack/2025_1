@@ -43,6 +43,7 @@ const RegionMasks = ({
   const [markings, setMarkings] = useState<{ x: number; y: number; timestamp: string }[]>([]);
   const markingResetRef = useRef<() => void | undefined>(undefined);
   const animationFrameRef = useRef<number | null>(null);
+  const hasReloadedRef = useRef(false); // リロードが一度だけ行われるようにするためのフラグ
 
   useEffect(() => {
     const img = new Image();
@@ -106,14 +107,22 @@ const RegionMasks = ({
       };
     };
 
+    // 特定の条件に基づいてマスクを無効にする
+    const effectiveShowMaskedChubu = showMaskedChubu && !(dominationLevels.Kansai === 100);
+    const effectiveShowMaskedChugoku = showMaskedChugoku && !(dominationLevels.Kansai === 100);
+    const effectiveShowMaskedKanto = showMaskedKanto && !(dominationLevels.Chubu === 100);
+    const effectiveShowMaskedTohoku = showMaskedTohoku && !(dominationLevels.Chubu === 100);
+    const effectiveShowMaskedKyushu = showMaskedKyushu && !(dominationLevels.Chugoku === 100);
+    const effectiveShowMaskedShikoku = showMaskedShikoku && !(dominationLevels.Chugoku === 100);
+
     const regions = [
       { id: 'Kansai', name: '関西', show: showMaskedKansai },
-      { id: 'Kanto', name: '関東', show: showMaskedKanto },
-      { id: 'Kyushu', name: '九州', show: showMaskedKyushu },
-      { id: 'Tohoku', name: '東北', show: showMaskedTohoku },
-      { id: 'Chubu', name: '中部', show: showMaskedChubu },
-      { id: 'Chugoku', name: '中国', show: showMaskedChugoku },
-      { id: 'Shikoku', name: '四国', show: showMaskedShikoku }
+      { id: 'Kanto', name: '関東', show: effectiveShowMaskedKanto },
+      { id: 'Kyushu', name: '九州', show: effectiveShowMaskedKyushu },
+      { id: 'Tohoku', name: '東北', show: effectiveShowMaskedTohoku },
+      { id: 'Chubu', name: '中部', show: effectiveShowMaskedChubu },
+      { id: 'Chugoku', name: '中国', show: effectiveShowMaskedChugoku },
+      { id: 'Shikoku', name: '四国', show: effectiveShowMaskedShikoku }
     ];
 
     regions.forEach(region => {
@@ -180,14 +189,21 @@ const RegionMasks = ({
     }
 
     // マスクされている地方をチェック
+    const effectiveShowMaskedChubu = showMaskedChubu && !(dominationLevels.Kansai === 100);
+    const effectiveShowMaskedChugoku = showMaskedChugoku && !(dominationLevels.Kansai === 100);
+    const effectiveShowMaskedKanto = showMaskedKanto && !(dominationLevels.Chubu === 100);
+    const effectiveShowMaskedTohoku = showMaskedTohoku && !(dominationLevels.Chubu === 100);
+    const effectiveShowMaskedKyushu = showMaskedKyushu && !(dominationLevels.Chugoku === 100);
+    const effectiveShowMaskedShikoku = showMaskedShikoku && !(dominationLevels.Chugoku === 100);
+
     const maskedRegions = [
       { id: 'Kansai', show: showMaskedKansai },
-      { id: 'Kanto', show: showMaskedKanto },
-      { id: 'Kyushu', show: showMaskedKyushu },
-      { id: 'Tohoku', show: showMaskedTohoku },
-      { id: 'Chubu', show: showMaskedChubu },
-      { id: 'Chugoku', show: showMaskedChugoku },
-      { id: 'Shikoku', show: showMaskedShikoku }
+      { id: 'Kanto', show: effectiveShowMaskedKanto },
+      { id: 'Kyushu', show: effectiveShowMaskedKyushu },
+      { id: 'Tohoku', show: effectiveShowMaskedTohoku },
+      { id: 'Chubu', show: effectiveShowMaskedChubu },
+      { id: 'Chugoku', show: effectiveShowMaskedChugoku },
+      { id: 'Shikoku', show: effectiveShowMaskedShikoku }
     ];
 
     // マスクされている地方かチェック
