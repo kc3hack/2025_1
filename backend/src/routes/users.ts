@@ -1,45 +1,96 @@
 import { Hono } from 'hono';
 import { PrismaClient } from '@prisma/client';
-import * as jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 const users = new Hono();
 const prisma = new PrismaClient();
 
-// ユーザー情報取得エンドポイント（IDによる取得）
-users.get('/:id', async (c) => {
+// 既存のユーザー情報取得（パーツ、要塞を含む）
+users.get('/info/:userId', async (c) => {
   try {
-    const userId = c.req.param('id');
-    const token = c.req.header('Authorization')?.split(' ')[1];
-
-    if (!token) {
-      return c.json({ error: 'Unauthorized' }, 401);
-    }
-
-    // トークンの検証
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    const userId = c.req.param("userId");
     
-    // トークンのユーザーIDとリクエストのIDが一致するか確認
-    if (decoded.userId !== userId) {
-      return c.json({ error: 'Unauthorized' }, 401);
-    }
-
     const user = await prisma.user.findUnique({
       where: { user_id: userId },
-      select: {
-        user_id: true,
-        user_name: true,
-        random_parts_num: true,
+      include: {
+        parts: true,
+        fortresses: true,
       },
     });
 
     if (!user) {
-      return c.json({ error: 'User not found' }, 404);
+      return c.json({ error: "ユーザーが見つかりません" }, 404);
     }
 
-    return c.json(user);
+    const { password, ...userWithoutPassword } = user;
+    return c.json({ user: userWithoutPassword });
   } catch (error) {
-    return c.json({ error: 'Internal server error' }, 500);
+    return c.json({ error: "ユーザー情報の取得に失敗しました" }, 400);
   }
 });
 
-export default users;
+// random_parts_num取得用のエンドポイント
+users.get('/random/:userId', async (c) => {
+  try {
+    const userId = c.req.param('userId');
+    console.log('Received userId:', userId);
+
+    const authHeader = c.req.header('Authorization');
+    console.log('Auth header:', authHeader);
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({ error: '認証が必要です' }, 401);
+    }
+
+    const token = authHeader.split(' ')[1];
+    
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+      console.log('Decoded token:', decoded);
+      
+      if (typeof decoded === 'string' || decoded.userId !== userId) {
+        return c.json({ error: '不正なトークンです' }, 403);
+      }
+    } catch (error) {
+      console.error('Token verification error:', error);
+      return c.json({ error: '不正なトークンです' }, 403);
+    }
+
+    console.log('Attempting to find user with query:', {
+      where: { user_id: userId },
+      select: { user_id: true, random_parts_num: true }
+    });
+
+    const user = await prisma.user.findUnique({
+      where: { 
+        user_id: userId
+      },
+      select: {
+        user_id: true,
+        random_parts_num: true
+      }
+    });
+
+    console.log('Found user:', user);
+
+    if (!user) {
+      return c.json({ error: 'ユーザーが見つかりません' }, 404);
+    }
+
+    const response = {
+      user_id: user.user_id,
+      random_parts_num: user.random_parts_num || 10
+    };
+    console.log('Sending response:', response);
+    return c.json(response);
+
+  } catch (error: any) {
+    console.error('Detailed error:', error);
+    return c.json({ 
+      error: 'サーバーエラーが発生しました', 
+      details: error?.message || '不明なエラー'
+    }, 500);
+  }
+});
+
+export default users; 

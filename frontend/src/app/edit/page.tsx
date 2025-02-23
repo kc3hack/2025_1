@@ -90,8 +90,35 @@ export default function EditPage() {
 
     const handlePlacePart = () => {
         const success = placePart();
-        if (success) {
-            router.push('/edit/editPreview');
+    };
+
+    const goToMap = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId');
+
+            if (!token || !userId) {
+                console.error('認証情報が見つかりません');
+                router.push('/map');
+                return;
+            }
+
+            // 最新のマーキングを削除
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/markings/latest/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                console.error('マーキングの削除に失敗しました');
+            }
+
+            router.push('/map');
+        } catch (error) {
+            console.error('エラー:', error);
+            router.push('/map');
         }
     };
 
@@ -103,7 +130,7 @@ export default function EditPage() {
             <ScorePanel />
             <TipsPanel tip={tips[currentTipIndex]} />
             <div className={styles.buttonGroup}>
-                <NextButton type="retire" position="left" text="リタイア" />
+                <NextButton type="retire" position="left" text="リタイア" onClick={goToMap} />
                 <NextButton type="rotate" position="center" text="回転" onClick={rotatePart} />
                 <NextButton type="place" position="right" text="設置" onClick={handlePlacePart} />
             </div>

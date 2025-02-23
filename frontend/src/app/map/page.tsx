@@ -37,7 +37,9 @@ const MapPage = () => {
     Shikoku: 0,
     Kyushu: 0
   });
-
+  const [randomPartsNum, setRandomPartsNum] = useState<number>(10);
+  const [userMarkings, setUserMarkings] = useState<Array<{ x: number; y: number; markType: string }>>([]);
+ 
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
   const router = useRouter();
   const markingResetRef = useRef<(() => void) | null>(null);
@@ -63,22 +65,67 @@ const MapPage = () => {
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
         
-        const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+        console.log('Attempting to fetch with:', { userId, token: !!token }); // デバッグ用
+
+        if (!token || !userId) {
+          console.error('認証情報が見つかりません');
+          return;
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/random/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) throw new Error('Failed to fetch user data');
-        
+        console.log('Response status:', response.status); // デバッグ用
         const data = await response.json();
-        setUserData(data);
+        console.log('Response data:', data); // デバッグ用
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        
+        setRandomPartsNum(data.random_parts_num || 10);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('認証エラー:', error);
       }
     };
 
     fetchUserData();
+  }, []);
+
+  // ユーザーのマーキングを取得する関数
+  const fetchUserMarkings = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      if (!token || !userId) {
+        console.error('認証情報が見つかりません');
+        return;
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/markings/user/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('マーキングの取得に失敗しました');
+      }
+
+      const markings = await response.json();
+      setUserMarkings(markings);
+    } catch (error) {
+      console.error('マーキング取得エラー:', error);
+    }
+  };
+
+  // コンポーネントマウント時にマーキングを取得
+  useEffect(() => {
+    fetchUserMarkings();
   }, []);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
@@ -92,9 +139,42 @@ const MapPage = () => {
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = () => {
-    // OKの場合、編集ページへ遷移
-    router.push('/edit');
+  const handleConfirm = async () => {
+    if (!currentMarking) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      if (!token || !userId) {
+        console.error('認証情報が見つかりません');
+        return;
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/markings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId,
+          x: currentMarking.x,
+          y: currentMarking.y,
+          region: currentMarking.region,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('マーキングの保存に失敗しました');
+      }
+
+      // 保存成功後、編集ページへ遷移
+      router.push('/edit');
+    } catch (error) {
+      console.error('マーキング保存エラー:', error);
+      // エラー処理（必要に応じてユーザーに通知）
+    }
   };
 
   const handleCancel = () => {
@@ -122,6 +202,7 @@ const MapPage = () => {
         onMarkingComplete={handleMarkingComplete}
         onMarkingReset={handleMarkingReset}
         dominationLevels={dominationLevels} // 初期値を設定
+        existingMarkings={userMarkings}
       />
 
       <Menu />
@@ -135,7 +216,7 @@ const MapPage = () => {
 
       <NextTurnButton 
         onProcessingChange={setIsProcessing}
-        randomPartsNum={userData?.random_parts_num ?? 10}
+        randomPartsNum={randomPartsNum}
       />
 
       {showCompletionModal && (

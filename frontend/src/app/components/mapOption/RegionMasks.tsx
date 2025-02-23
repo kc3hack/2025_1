@@ -14,6 +14,7 @@ interface BaseMapProps {
   onMarkingComplete: (marking: { x: number; y: number; region: string }) => void;
   onMarkingReset?: () => void;
   dominationLevels: { [region: string]: number }; // 各地域の統治度を受け取る
+  existingMarkings?: Array<{ x: number; y: number; markType: string }>;
 }
 
 const RegionMasks = ({ 
@@ -25,7 +26,8 @@ const RegionMasks = ({
   onPositionChange,
   onMarkingComplete,
   onMarkingReset,
-  dominationLevels = {}
+  dominationLevels = { Tohoku: 100 }, // Tohokuの初期値を100に設定
+  existingMarkings = [],
 }: BaseMapProps) => {
   const [showMaskedKansai, setShowMaskedKansai] = useState(false);
   const [showMaskedKanto, setShowMaskedKanto] = useState(true);
@@ -56,6 +58,22 @@ const RegionMasks = ({
   useEffect(() => {
     drawMasks();
   }, [showMaskedKansai, showMaskedKanto, showMaskedKyushu, showMaskedTohoku, showMaskedChubu, showMaskedChugoku, showMaskedShikoku, dominationLevels]);
+
+  useEffect(() => {
+    if (!canvasRef.current || !imageRef.current) return;
+    
+    const ctx = canvasRef.current.getContext('2d');
+    if (!ctx) return;
+
+    // ベース地図を描画
+    drawMap();
+    drawMasks();
+
+    // 既存のマーキングを描画
+    existingMarkings.forEach(marking => {
+      drawExistingMarking(ctx, marking.x, marking.y, marking.markType);
+    });
+  }, [existingMarkings, imageRef.current]);
 
   const drawMap = () => {
     const canvas = canvasRef.current;
@@ -212,7 +230,7 @@ const RegionMasks = ({
       timestamp: `marking-${Date.now()}-${markings.length}`
     };
     setMarkings(prev => [...prev, newMarking]);
-    drawMarking(ctx, x, y);
+    drawNewMarking(ctx, x, y);
     
     onMarkingComplete({ x, y, region });
   };
@@ -286,7 +304,16 @@ const RegionMasks = ({
     });
   };
 
-  const drawMarking = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+  const drawExistingMarking = (ctx: CanvasRenderingContext2D, x: number, y: number, markType: string) => {
+    const img = new Image();
+    img.src = `/tombs/${markType}.png`;
+    img.onload = () => {
+      // 画像サイズを調整（例：20x20ピクセル）
+      ctx.drawImage(img, x - 10, y - 10, 20, 20);
+    };
+  };
+
+  const drawNewMarking = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
     ctx.beginPath();
     ctx.arc(x, y, 5, 0, Math.PI * 2);
     ctx.fillStyle = 'red';
@@ -331,6 +358,15 @@ const RegionMasks = ({
     if (onMarkingReset) {
       markingResetRef.current = redrawCanvas;
     }
+  }, []);
+
+  // マーキング画像のプリロード
+  useEffect(() => {
+    const markTypes = ['circle', 'key', 'square'];
+    markTypes.forEach(type => {
+      const img = new Image();
+      img.src = `/tombs/${type}.png`;
+    });
   }, []);
 
   return (
