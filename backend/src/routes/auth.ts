@@ -36,6 +36,11 @@ export const login = async (c: Context) => {
     
     const existingUser = await prisma.user.findFirst({
       where: { user_name: username },
+      select: {
+        user_id: true,
+        password: true,
+        user_name: true
+      }
     });
 
     if (existingUser) {

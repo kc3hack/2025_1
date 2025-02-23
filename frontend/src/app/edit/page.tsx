@@ -28,9 +28,6 @@ export default function EditPage() {
     const { rotatePart, placePart, shouldNavigateToPreview } = usePartsStore();
     const router = useRouter();
     const [currentTipIndex, setCurrentTipIndex] = useState(0);
-    const goToMap = () => {
-        router.push('/map');
-      };
 
     useEffect(() => {
         if (shouldNavigateToPreview) {
@@ -93,6 +90,36 @@ export default function EditPage() {
 
     const handlePlacePart = () => {
         const success = placePart();
+    };
+
+    const goToMap = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId');
+
+            if (!token || !userId) {
+                console.error('認証情報が見つかりません');
+                router.push('/map');
+                return;
+            }
+
+            // 最新のマーキングを削除
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/markings/latest/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                console.error('マーキングの削除に失敗しました');
+            }
+
+            router.push('/map');
+        } catch (error) {
+            console.error('エラー:', error);
+            router.push('/map');
+        }
     };
 
     return (

@@ -4,6 +4,7 @@ import { corsMiddleware } from './middleware/cors';
 import * as auth from './routes/auth';
 import users from './routes/users';
 import fortresses from './routes/fortresses';
+import markings from './routes/markings';
 
 const app = new Hono();
 
@@ -19,6 +20,9 @@ app.route('/api/users', users);
 
 // 古墳ルート
 app.route('/api/fortresses', fortresses);
+
+// マーキングルート
+app.route('/api/markings', markings);
 
 // ポートを3002に変更
 const PORT = 3002;
