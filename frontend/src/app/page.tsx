@@ -12,40 +12,43 @@ const StartPage: React.FC = () => {
 
   const goToMap = async () => {
     if (!userName || !password) {
-      setErrorMessage('ログイン失敗');
+      setErrorMessage('ユーザー名とパスワードを入力してください');
       return;
     }
 
     try {
-      console.log('Attempting authentication for user:', userName);
+      console.log('認証を試みています:', userName);
       const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           username: userName,
           password: password,
         }),
+        credentials: 'omit',
       });
 
+      console.log('Response status:', response.status);
+
+      const data = await response.json();
+      console.log('Response data:', data);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Authentication failed:', errorData);
-        setErrorMessage('認証に失敗しました');
+        console.error('認証エラー:', data);
+        setErrorMessage(data.error || '認証に失敗しました');
         return;
       }
 
-      const data = await response.json();
-      console.log(`✅ ${data.status === 'login_success' ? 'ログイン' : '新規登録'}成功:`, data);
-      
-      // 認証成功時の処理
+      console.log(`✅ ${data.message}`);
       localStorage.setItem('token', data.token);
       localStorage.setItem('userId', data.userId);
       router.push('/map');
     } catch (error) {
-      console.error('Error during authentication:', error);
-      setErrorMessage('認証中にエラーが発生しました');
+      console.error('認証エラー:', error);
+      setErrorMessage('サーバーとの通信に失敗しました。しばらく待ってから再試行してください。');
     }
   };
 

@@ -1,0 +1,33 @@
+{
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "@prisma/client": "^6.4.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.7",
+    "hono": "^4.7.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/bun": "^1.2.2",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.13.5",
+    "bun-types": "^1.2.2",
+    "prisma": "^6.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "bun run --hot src/server.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "studio": "DATABASE_URL=\"mysql://root:password@localhost:3306/mydb\" bunx prisma studio"
+  },
+  "compilerOptions": {
+    "types": [
+      "bun-types"
+    ]
+  }
+}

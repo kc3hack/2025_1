@@ -1,0 +1,68 @@
+version: "3.8"
+services:
+  db:
+    image: mysql:8.0
+    container_name: kofun_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+      TZ: Asia/Tokyo
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    platform: linux/arm64/v8
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - app-network
+
+  backend:
+    build: 
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    container_name: hono_backend
+    restart: always
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=mysql://root:password@db:3306/mydb
+      - PORT=3001
+      - HOST=0.0.0.0
+      - DEBUG=prisma:*,hono:*
+    ports:
+      - "3001:3001"
+      - "5555:5555"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        sleep 10 &&
+        echo 'Running migrations...' &&
+        bunx prisma migrate deploy &&
+        echo 'Generating Prisma Client...' &&
+        rm -rf node_modules/.prisma/client &&
+        bunx prisma generate &&
+        echo 'Starting server...' &&
+        bun run --hot src/server.ts
+      "
+    platform: linux/arm64/v8
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

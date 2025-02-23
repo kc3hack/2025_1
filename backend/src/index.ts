@@ -1,24 +1,26 @@
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import auth from './routes/auth';
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
+import { corsMiddleware } from './middleware/cors';
+import * as auth from './routes/auth';
+import * as users from './routes/users';
 
 const app = new Hono();
 
-// CORSの設定を更新
-app.use('/*', cors({
-  origin: ['http://localhost:3000'],  // フロントエンドのポートを3000に修正
-  allowMethods: ['POST', 'GET', 'OPTIONS'],  // 許可するメソッドを指定
-  allowHeaders: ['Content-Type', 'Authorization'],  // 許可するヘッダーを指定
-  credentials: true,
-  exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
-}));
+// ミドルウェアの適用
+app.use('/*', corsMiddleware);
 
-// 基本的な動作確認用エンドポイント
-app.get('/', (c) => {
-  return c.json({ message: 'Hello, World!' });
-});
+// 認証ルート
+app.post("/api/auth/register", auth.register);
+app.post("/api/auth/login", auth.login);
 
-// 認証ルートを追加
-app.route('/', auth);
+// ユーザールート
+app.get("/api/users/:userId", users.getUserInfo);
 
-export default app; 
+// ポート設定を明示的に
+const PORT = 3001;
+console.log(`Starting server on port ${PORT}...`);
+
+serve({
+  fetch: app.fetch,
+  port: PORT
+}); 
