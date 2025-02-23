@@ -93,7 +93,7 @@ app.get('/top-scores', async (c) => {
   try {
     const topFortresses = await prisma.fortress.findMany({
       take: 3,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { score: 'desc' },
       select: {
         id: true,
         name: true,
