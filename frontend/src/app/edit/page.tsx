@@ -28,6 +28,9 @@ export default function EditPage() {
     const { rotatePart, placePart, shouldNavigateToPreview } = usePartsStore();
     const router = useRouter();
     const [currentTipIndex, setCurrentTipIndex] = useState(0);
+    const goToMap = () => {
+        router.push('/map');
+      };
 
     useEffect(() => {
         if (shouldNavigateToPreview) {
@@ -100,7 +103,7 @@ export default function EditPage() {
             <ScorePanel />
             <TipsPanel tip={tips[currentTipIndex]} />
             <div className={styles.buttonGroup}>
-                <NextButton type="retire" position="left" text="リタイア" />
+                <NextButton type="retire" position="left" text="リタイア" onClick={goToMap} />
                 <NextButton type="rotate" position="center" text="回転" onClick={rotatePart} />
                 <NextButton type="place" position="right" text="設置" onClick={handlePlacePart} />
             </div>
