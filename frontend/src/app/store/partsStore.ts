@@ -257,6 +257,7 @@ interface PartsStore extends GameState {
     isCompleted: boolean;
     shouldNavigateToPreview: boolean; // 追加
     completedGridState: GridState | null;  // 追加
+    random_parts_num: number;  // 追加
 }
 
 export const usePartsStore = create<PartsStore>((set, get) => ({
@@ -274,16 +275,22 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
     isCompleted: false,
     shouldNavigateToPreview: false,
     completedGridState: null,  // 追加
+    random_parts_num: 10,  // デフォルト値として10を設定
 
     initializeGame: () => {
-        // 重複のない10個のパーツを選択
-        const uniqueParts = getRandomUniqueParts(10);
-        const selectedParts: GamePart[] = uniqueParts.map(part => ({
-            ...part,
-            position: null,
-            isPlaced: false,
-            usedDocks: new Set()
-        }));
+        // DBから取得したrandom_parts_numを使用（デフォルトは10）
+        const random_parts_num = get().random_parts_num || 10;
+        
+        // random_parts_num個のパーツをランダムに選択
+        const selectedParts: GamePart[] = Array(random_parts_num).fill(null).map(() => {
+            const randomPart = getRandomPart();
+            return {
+                ...randomPart,
+                position: null,
+                isPlaced: false,
+                usedDocks: new Set()
+            };
+        });
 
         set({
             availableParts: selectedParts,
@@ -570,6 +577,11 @@ export const usePartsStore = create<PartsStore>((set, get) => ({
         });
     }
 }));
+
+// パーツをランダムに1つ選択する関数
+function getRandomPart(): Part {
+    return PREDEFINED_PARTS[Math.floor(Math.random() * PREDEFINED_PARTS.length)];
+}
 
 // パーツの重複を避けるためのヘルパー関数
 function getRandomUniqueParts(count: number): Part[] {

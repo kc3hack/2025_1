@@ -25,7 +25,7 @@ const tips = [
 ];
 
 export default function EditPage() {
-    const { rotatePart, placePart, shouldNavigateToPreview } = usePartsStore();
+    const { rotatePart, placePart, shouldNavigateToPreview, initializeGame, random_parts_num } = usePartsStore();
     const router = useRouter();
     const [currentTipIndex, setCurrentTipIndex] = useState(0);
 
@@ -83,6 +83,36 @@ export default function EditPage() {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [router]);
+
+    useEffect(() => {
+        // ユーザーデータを取得してrandom_parts_numを設定
+        const fetchUserData = async () => {
+            try {
+                const userId = localStorage.getItem('userId');
+                const token = localStorage.getItem('token');
+                
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/random/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('データの取得に失敗しました');
+                }
+
+                const data = await response.json();
+                // storeのrandom_parts_numを更新
+                usePartsStore.setState({ random_parts_num: data.random_parts_num });
+                // その後でゲームを初期化
+                initializeGame();
+            } catch (error) {
+                console.error('エラー:', error);
+            }
+        };
+
+        fetchUserData();
+    }, []);
 
     const handleComplete = () => {
         router.push('/edit/editPreview');
