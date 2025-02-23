@@ -201,13 +201,13 @@ const MapPage = () => {
         onPositionChange={setPosition}
         onMarkingComplete={handleMarkingComplete}
         onMarkingReset={handleMarkingReset}
-        dominationLevels={dominationLevels} // 初期値を設定
+        dominationLevels={dominationLevels}
         existingMarkings={userMarkings}
       />
 
       <Menu />
 
-      <DominationMenu dominationLevels={dominationLevels} /> // 初期値を設定
+      <DominationMenu dominationLevels={dominationLevels} />
 
       <ZoomControls 
         onScaleChange={setScale}

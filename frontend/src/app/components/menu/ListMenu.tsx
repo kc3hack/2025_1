@@ -8,10 +8,6 @@ const Menu = () => {
     router.push('/map/scoreCollections');
   };
 
-  const goToPartsCollections = () => {
-    router.push('/map/partsCollections');
-  };
-
   const goToTombsCollections = () => {
     router.push('/map/tombsCollections');
   };
@@ -29,17 +25,12 @@ const Menu = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '5px',
-          paddingTop: '20px',
+          gap: '15px',
+          paddingTop: '30px',
         }}>
           <div className={styles.buttonFrame}>
             <div className={styles.buttonBackground} />
             <button className={styles.menuButton} onClick={goToScoreCollections}>スコア一覧</button>
-            <div className={styles.buttonFrameBackground} />
-          </div>
-          <div className={styles.buttonFrame}>
-            <div className={styles.buttonBackground} />
-            <button className={styles.menuButton} onClick={goToPartsCollections}>パーツコレクション</button>
             <div className={styles.buttonFrameBackground} />
           </div>
           <div className={styles.buttonFrame}>
