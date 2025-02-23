@@ -28,6 +28,7 @@ const MapPage = () => {
   const [currentUserId, setCurrentUserId] = useState<string>('');
   const [userData, setUserData] = useState<UserData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [randomPartsNum, setRandomPartsNum] = useState<number>(10);
   
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
   const router = useRouter();
@@ -54,18 +55,30 @@ const MapPage = () => {
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
         
-        const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+        console.log('Attempting to fetch with:', { userId, token: !!token }); // デバッグ用
+
+        if (!token || !userId) {
+          console.error('認証情報が見つかりません');
+          return;
+        }
+
+        const response = await fetch(`http://localhost:3001/api/users/random/${userId}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
         });
 
-        if (!response.ok) throw new Error('Failed to fetch user data');
-        
+        console.log('Response status:', response.status); // デバッグ用
         const data = await response.json();
-        setUserData(data);
+        console.log('Response data:', data); // デバッグ用
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        
+        setRandomPartsNum(data.random_parts_num || 10);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('認証エラー:', error);
       }
     };
 
@@ -124,7 +137,7 @@ const MapPage = () => {
 
       <NextTurnButton 
         onProcessingChange={setIsProcessing}
-        randomPartsNum={userData?.random_parts_num ?? 10}
+        randomPartsNum={randomPartsNum}
       />
 
       {showCompletionModal && (
