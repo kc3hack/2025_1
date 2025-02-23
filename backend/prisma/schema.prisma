@@ -58,7 +58,9 @@ model Fortress {
   userId      String   @map("user_id")
   user        User     @relation(fields: [userId], references: [user_id])
   name        String   @map("completed_fortress")
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
+  parts       Json     // パーツの配置情報（形状データを含む）を保存
+  score       Int      @map("score")
 
   @@map("fortresses")
 }
