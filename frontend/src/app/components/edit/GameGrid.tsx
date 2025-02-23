@@ -162,7 +162,7 @@ export default function GameGrid({ readOnly, gridState }: GameGridProps) {
                                 draggable={false}
                             />
                         )}
-                        {renderPlacedParts(row, col)}
+                        {!isSafe && renderPlacedParts(row, col)}
                         {renderCurrentPart(row, col, isSafe)}
                     </div>
                 ))}
@@ -176,4 +176,4 @@ export default function GameGrid({ readOnly, gridState }: GameGridProps) {
             {renderTiles(25, 25, false)} {/* 通常エリア */}
         </div>
     )
-} 
+}
