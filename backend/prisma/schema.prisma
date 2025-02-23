@@ -71,6 +71,7 @@ model UserMarking {
   x           Float
   y           Float
   region      String
+  markType    String   @default("default") // "circle", "key", "square"のいずれか
   createdAt   DateTime @default(now()) @map("created_at")
 
   @@map("user_markings")

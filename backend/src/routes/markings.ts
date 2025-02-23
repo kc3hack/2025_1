@@ -9,18 +9,18 @@ const prisma = new PrismaClient();
 const verifyAuth = async (c: any, userId: string) => {
   const authHeader = c.req.header('Authorization');
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { error: '認証が必要です', statusCode: 401 };
+    return { error: '認証が必要です', statusCode: '401' };
   }
 
   const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     if (typeof decoded === 'string' || decoded.userId !== userId) {
-      return { error: '不正なトークンです', statusCode: 403 };
+      return { error: '不正なトークンです', statusCode: '403' };
     }
     return null;
   } catch (error) {
-    return { error: '不正なトークンです', statusCode: 403 };
+    return { error: '不正なトークンです', statusCode: '403' };
   }
 };
 
@@ -52,13 +52,18 @@ markings.post('/', async (c) => {
       return c.json({ error: 'ユーザーが見つかりません' }, 404);
     }
 
+    // ランダムなマークタイプを選択
+    const markTypes = ['circle', 'key', 'square'];
+    const randomMarkType = markTypes[Math.floor(Math.random() * markTypes.length)];
+
     // マーキングを保存
     const marking = await prisma.userMarking.create({
       data: {
         userId,
         x,
         y,
-        region
+        region,
+        markType: randomMarkType
       }
     });
     console.log('保存されたマーキング:', marking);  // デバッグログ

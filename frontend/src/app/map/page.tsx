@@ -29,6 +29,7 @@ const MapPage = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [randomPartsNum, setRandomPartsNum] = useState<number>(10);
+  const [userMarkings, setUserMarkings] = useState<Array<{ x: number; y: number; markType: string }>>([]);
   
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
   const router = useRouter();
@@ -83,6 +84,39 @@ const MapPage = () => {
     };
 
     fetchUserData();
+  }, []);
+
+  // ユーザーのマーキングを取得する関数
+  const fetchUserMarkings = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      if (!token || !userId) {
+        console.error('認証情報が見つかりません');
+        return;
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/markings/user/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('マーキングの取得に失敗しました');
+      }
+
+      const markings = await response.json();
+      setUserMarkings(markings);
+    } catch (error) {
+      console.error('マーキング取得エラー:', error);
+    }
+  };
+
+  // コンポーネントマウント時にマーキングを取得
+  useEffect(() => {
+    fetchUserMarkings();
   }, []);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLDivElement, Event>) => {
@@ -157,7 +191,10 @@ const MapPage = () => {
         isLoaded={isLoaded}
         onPositionChange={setPosition}
         onMarkingComplete={handleMarkingComplete}
-        onMarkingReset={handleMarkingReset} dominationLevels={{}}      />
+        onMarkingReset={handleMarkingReset}
+        dominationLevels={{}}
+        existingMarkings={userMarkings}
+      />
 
       <Menu />
 
