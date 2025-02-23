@@ -46,7 +46,7 @@
     font-weight: bold;
     width: 160px;
     height: 60px;
-    margin: 1rem 4rem;
+    margin: 1rem 6rem;
     background-color: white;
     display: flex;
     align-items: center;
@@ -58,7 +58,8 @@
   .shapeItem {
     width: 250px;
     height: 250px;
-    margin: 1rem;  background-color: #d3ff80;
+    margin: 1rem 3rem;
+    background-color: #d3ff80;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,7 +72,7 @@
     font-weight: bold;
     width: 250px;
     height: 120px;
-    margin: 1rem;
+    margin: 1rem 3rem;
     background-color: #b6ffb1;
     display: flex;
     align-items: center;

@@ -29,22 +29,10 @@ export default function FortressDisplay({ parts }: FortressDisplayProps) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     // 背景色を設定
-    ctx.fillStyle = '#f5f5f5';
+    ctx.fillStyle = '#D3FF80';  // 背景色を変更
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // グリッドを描画
-    ctx.strokeStyle = '#ddd';
-    for (let i = 0; i <= GRID_SIZE; i++) {
-      ctx.beginPath();
-      ctx.moveTo(i * CELL_SIZE, 0);
-      ctx.lineTo(i * CELL_SIZE, GRID_SIZE * CELL_SIZE);
-      ctx.stroke();
-      
-      ctx.beginPath();
-      ctx.moveTo(0, i * CELL_SIZE);
-      ctx.lineTo(GRID_SIZE * CELL_SIZE, i * CELL_SIZE);
-      ctx.stroke();
-    }
+    // グリッド線は描画しない
 
     // パーツを描画
     parts.forEach(part => {
