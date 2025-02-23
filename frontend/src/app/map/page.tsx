@@ -96,9 +96,42 @@ const MapPage = () => {
     setShowConfirmModal(true);
   };
 
-  const handleConfirm = () => {
-    // OKの場合、編集ページへ遷移
-    router.push('/edit');
+  const handleConfirm = async () => {
+    if (!currentMarking) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+
+      if (!token || !userId) {
+        console.error('認証情報が見つかりません');
+        return;
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/markings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId,
+          x: currentMarking.x,
+          y: currentMarking.y,
+          region: currentMarking.region,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('マーキングの保存に失敗しました');
+      }
+
+      // 保存成功後、編集ページへ遷移
+      router.push('/edit');
+    } catch (error) {
+      console.error('マーキング保存エラー:', error);
+      // エラー処理（必要に応じてユーザーに通知）
+    }
   };
 
   const handleCancel = () => {

@@ -12,12 +12,11 @@ model User {
   user_id           String    @id @default(uuid())
   user_name         String    
   password          String
-  marking_point_x   Float     @default(0)
-  marking_point_y   Float     @default(0)
   random_parts_num  Int       @default(10)
   created_at        DateTime  @default(now())
   parts             UserPart[]
   fortresses        Fortress[]
+  markings          UserMarking[]
 
   @@unique([user_name, password])
   @@map("users")
@@ -63,4 +62,16 @@ model Fortress {
   score       Int      @map("score")
 
   @@map("fortresses")
+}
+
+model UserMarking {
+  id          Int      @id @default(autoincrement())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [user_id])
+  x           Float
+  y           Float
+  region      String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("user_markings")
 }
