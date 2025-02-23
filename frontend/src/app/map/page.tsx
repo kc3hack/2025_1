@@ -28,7 +28,16 @@ const MapPage = () => {
   const [currentUserId, setCurrentUserId] = useState<string>('');
   const [userData, setUserData] = useState<UserData | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  
+  const [dominationLevels, setDominationLevels] = useState({
+    Kansai: 0,
+    Chubu: 0,
+    Kanto: 0,
+    Tohoku: 0,
+    Chugoku: 0,
+    Shikoku: 0,
+    Kyushu: 0
+  });
+
   const { showCompletionModal, setShowCompletionModal } = useModalStore();
   const router = useRouter();
   const markingResetRef = useRef<(() => void) | null>(null);
@@ -111,11 +120,13 @@ const MapPage = () => {
         isLoaded={isLoaded}
         onPositionChange={setPosition}
         onMarkingComplete={handleMarkingComplete}
-        onMarkingReset={handleMarkingReset} dominationLevels={{}}      />
+        onMarkingReset={handleMarkingReset}
+        dominationLevels={dominationLevels} // 初期値を設定
+      />
 
       <Menu />
 
-      <DominationMenu dominationLevels={{}} />
+      <DominationMenu dominationLevels={dominationLevels} /> // 初期値を設定
 
       <ZoomControls 
         onScaleChange={setScale}
