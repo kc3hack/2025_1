@@ -1,0 +1,8 @@
+.fortressCanvas {
+  width: 200px;
+  height: 200px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  image-rendering: pixelated;
+} 

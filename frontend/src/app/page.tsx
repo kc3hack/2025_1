@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import styles from './styles.module.css';
 import { useRouter } from 'next/navigation';
 
+const API_URL = 'http://localhost:3002';  // 一時的な対応
+
 const StartPage: React.FC = () => {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -18,7 +20,7 @@ const StartPage: React.FC = () => {
 
     try {
       console.log('認証を試みています:', userName);
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

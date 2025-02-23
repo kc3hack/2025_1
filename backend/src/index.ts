@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { corsMiddleware } from './middleware/cors';
 import * as auth from './routes/auth';
 import users from './routes/users';
+import fortresses from './routes/fortresses';
 
 const app = new Hono();
 
@@ -16,8 +17,11 @@ app.post("/api/auth/login", auth.login);
 // ユーザールート
 app.route('/api/users', users);
 
-// ポート設定を明示的に
-const PORT = 3001;
+// 古墳ルート
+app.route('/api/fortresses', fortresses);
+
+// ポートを3002に変更
+const PORT = 3002;
 console.log(`Starting server on port ${PORT}...`);
 
 serve({

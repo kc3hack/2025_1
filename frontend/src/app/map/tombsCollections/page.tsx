@@ -1,16 +1,50 @@
 'use client'; // クライアントコンポーネントとしてマーク
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
+import FortressDisplay from '../../components/FortressDisplay';
+
+interface Fortress {
+  id: number;
+  name: string;
+  score: number;
+  parts: Array<{
+    id: string;
+    x: number;
+    y: number;
+    rotation: number;
+    grid: number[][];
+  }>;
+}
 
 const TombsCollection: React.FC = () => {
-  const parts = Array.from({ length: 64 }, (_, index) => `Part ${index + 1}`);
+  const [fortresses, setFortresses] = useState<Fortress[]>([]);
   const router = useRouter();
 
-  const goToMap = () => {
-    router.push('/map');
-  };
+  useEffect(() => {
+    const fetchFortresses = async () => {
+      try {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('token');
+        
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fortresses/user/${userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) throw new Error('Failed to fetch fortresses');
+        
+        const data = await response.json();
+        setFortresses(data.fortresses);
+      } catch (error) {
+        console.error('Failed to fetch fortresses:', error);
+      }
+    };
+
+    fetchFortresses();
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -20,17 +54,16 @@ const TombsCollection: React.FC = () => {
         </div>
         <div className={styles.gridContainer}>
           <div className={styles.grid}>
-            {parts.map((part, index) => (
-              <div key={index} className={styles.gridItem}>
-                {part}
+            {fortresses.map((fortress) => (
+              <div key={fortress.id} className={styles.gridItem}>
+                <FortressDisplay parts={fortress.parts} />
               </div>
             ))}
           </div>
         </div>
-        <button className={styles.backButton} onClick={goToMap}>
+        <button className={styles.backButton} onClick={() => router.push('/map')}>
           戻る
         </button>
-        <div className={styles.backButtonFrame} />
       </div>
     </div>
   );
