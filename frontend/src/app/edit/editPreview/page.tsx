@@ -50,6 +50,18 @@ export default function EditPreviewPage() {
                 throw new Error(errorData.error || '保存に失敗しました');
             }
             
+            // random_parts_numを更新
+            const updateResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/random-parts`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!updateResponse.ok) {
+                throw new Error('ランダムパーツ数の更新に失敗しました');
+            }
+            
             // 成功時の処理
             useModalStore.getState().setShowCompletionModal(true);
             router.push('/map');

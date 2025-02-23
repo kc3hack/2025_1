@@ -83,12 +83,13 @@ const MapPage = () => {
         console.log('Response data:', data); // デバッグ用
 
         if (!response.ok) {
-          throw new Error('Failed to fetch user data');
+          throw new Error('データの取得に失敗しました');
         }
         
         setRandomPartsNum(data.random_parts_num || 10);
       } catch (error) {
-        console.error('認証エラー:', error);
+        console.error('エラー詳細:', error);
+        // エラーハンドリング
       }
     };
 

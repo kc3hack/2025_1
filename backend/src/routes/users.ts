@@ -93,4 +93,37 @@ users.get('/random/:userId', async (c) => {
   }
 });
 
+// Expressスタイルのrouter.putをHonoスタイルに修正
+users.put('/random-parts', async (c) => {
+    try {
+        const authHeader = c.req.header('Authorization');
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return c.json({ error: '認証が必要です' }, 401);
+        }
+
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        
+        if (typeof decoded === 'string') {
+            return c.json({ error: '不正なトークンです' }, 403);
+        }
+
+        const userId = decoded.userId;
+        
+        const updatedUser = await prisma.user.update({
+            where: { user_id: userId },
+            data: {
+                random_parts_num: {
+                    increment: 1
+                }
+            }
+        });
+
+        return c.json({ success: true, random_parts_num: updatedUser.random_parts_num });
+    } catch (error) {
+        console.error('ランダムパーツ数の更新に失敗:', error);
+        return c.json({ error: 'ランダムパーツ数の更新に失敗しました' }, 500);
+    }
+});
+
 export default users; 
