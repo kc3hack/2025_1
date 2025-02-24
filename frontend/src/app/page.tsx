@@ -58,7 +58,7 @@ const StartPage: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.titleContainer}>
-          <div className={styles.title}>古  墳  メ  ー  カ  ー</div>
+          <div className={styles.title}>新   古   墳   時   代</div>
         </div>
         <div className={styles.form}>
           <div className={styles.userName}>

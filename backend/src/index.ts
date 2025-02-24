@@ -5,6 +5,7 @@ import * as auth from './routes/auth';
 import users from './routes/users';
 import fortresses from './routes/fortresses';
 import markings from './routes/markings';
+import governance from './routes/governance';
 
 const app = new Hono();
 
@@ -23,6 +24,9 @@ app.route('/api/fortresses', fortresses);
 
 // マーキングルート
 app.route('/api/markings', markings);
+
+// ガバナンスルート
+app.route('/api/governance', governance);
 
 // ポートを3002に変更
 const PORT = 3002;

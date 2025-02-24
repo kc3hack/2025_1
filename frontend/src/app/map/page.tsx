@@ -96,6 +96,48 @@ const MapPage = () => {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const fetchGovernance = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId');
+
+            if (!token || !userId) {
+                console.error('認証情報が見つかりません');
+                return;
+            }
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/governance/${userId}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('統治度の取得に失敗しました');
+            }
+
+            const data = await response.json();
+            
+            // データベースの値をDominationMenuの形式に変換
+            setDominationLevels({
+                Kansai: data.kansai || 0,
+                Chubu: data.chubu || 0,
+                Kanto: data.kanto || 0,
+                Tohoku: data.tohoku || 0,
+                Chugoku: data.chugoku || 0,
+                Shikoku: data.shikoku || 0,
+                Kyushu: data.kyushu || 0
+            });
+
+        } catch (error) {
+            console.error('統治度の取得に失敗:', error);
+        }
+    };
+
+    fetchGovernance();
+}, []); // コンポーネントのマウント時に一度だけ実行
+
   // ユーザーのマーキングを取得する関数
   const fetchUserMarkings = async () => {
     try {
@@ -170,11 +212,13 @@ const MapPage = () => {
         throw new Error('マーキングの保存に失敗しました');
       }
 
+      // 選択した地域をlocalStorageに保存
+      localStorage.setItem('selectedRegion', currentMarking.region);
+
       // 保存成功後、編集ページへ遷移
       router.push('/edit');
     } catch (error) {
       console.error('マーキング保存エラー:', error);
-      // エラー処理（必要に応じてユーザーに通知）
     }
   };
 
