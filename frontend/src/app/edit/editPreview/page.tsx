@@ -26,17 +26,19 @@ export default function EditPreviewPage() {
         
         try {
             const token = localStorage.getItem('token');
-            if (!token) {
+            const userId = localStorage.getItem('userId');
+            if (!token || !userId) {
                 throw new Error('認証情報がありません');
             }
 
+            // 古墳データの作成と保存
             const fortressData = createFortressData(
                 usePartsStore.getState().placedParts,
                 usePartsStore.getState().score,
                 "My Fortress"
             );
             
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fortresses`, {
+            const fortressResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/fortresses`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,11 +47,40 @@ export default function EditPreviewPage() {
                 body: JSON.stringify(fortressData),
             });
             
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || '保存に失敗しました');
+            if (!fortressResponse.ok) {
+                throw new Error('古墳の保存に失敗しました');
             }
-            
+
+            // 統治度の更新
+            const region = localStorage.getItem('selectedRegion');
+            if (!region) {
+                throw new Error('地域が選択されていません');
+            }
+
+            const score = usePartsStore.getState().score;
+            const isSuccess = usePartsStore.getState().isCompleted;
+
+            // 統治度の更新リクエスト
+            const governanceResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/governance/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    region,
+                    score,
+                    isSuccess
+                }),
+            });
+
+            if (!governanceResponse.ok) {
+                // エラーの詳細を取得
+                const errorData = await governanceResponse.json();
+                console.error('Governance update error details:', errorData);
+                throw new Error(errorData.details || errorData.error || '統治度の更新に失敗しました');
+            }
+
             // random_parts_numを更新
             const updateResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/random-parts`, {
                 method: 'PUT',
@@ -62,19 +93,11 @@ export default function EditPreviewPage() {
                 throw new Error('ランダムパーツ数の更新に失敗しました');
             }
             
-            // 成功時の処理
             useModalStore.getState().setShowCompletionModal(true);
             router.push('/map');
         } catch (error) {
-            console.error('古墳の保存に失敗:', error);
-            let errorMessage = '古墳の保存に失敗しました。';
-            
-            if (error instanceof Response) {
-                const data = await error.json();
-                errorMessage = data.message || data.error || errorMessage;
-            }
-            
-            alert(errorMessage);
+            console.error('保存に失敗:', error);
+            alert(error instanceof Error ? error.message : '保存に失敗しました');
         }
     };
 
